@@ -1,0 +1,45 @@
+{
+ "hole": 16,
+ "label": "hole_16",
+ "needs_review": true,
+ "hole_source": "hole_line",
+ "source_work_units": [
+  "USGS Lidar Point Cloud AZ_PimaCounty_2021_B21"
+ ],
+ "acquisition_dates": [
+  "2021-10-04"
+ ],
+ "tiles": [
+  "USGS_LPC_AZ_PimaCounty_2021_B21_494581.laz"
+ ],
+ "crs_horizontal": "EPSG:6341 NAD83(2011) / UTM zone 12N (m)",
+ "crs_vertical": "EPSG:5703 NAVD88 height (m), GEOID18",
+ "cell_size_m": 0.25,
+ "grid_shape": [
+  200,
+  213
+ ],
+ "grid_origin_north_up": [
+  494570.5,
+  3582009.0
+ ],
+ "local_origin_utm": [
+  494595.94566407765,
+  3581984.466113955,
+  723.3729858398438
+ ],
+ "green_area_m2": 484.0,
+ "class2_density_on_green_pts_m2": 18.11,
+ "n_points_fit_region": 35299,
+ "lambda": 316.2277660168379,
+ "fit_rms_m": 0.0363,
+ "fit_band_note": "in_band",
+ "slope_mean_pct": 3.67,
+ "slope_max_pct": 6.62,
+ "slope_max_sustained_pct": 6.66,
+ "sustained_window_m": 1.0,
+ "elevation_range_on_green_m": 1.065,
+ "flags": [],
+ "generated": "2026-07-06T20:19:02+00:00",
+ "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"
+}

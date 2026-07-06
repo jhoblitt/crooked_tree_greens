@@ -1,0 +1,17 @@
+[project]
+name = "crooked-tree-greens"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "folium>=0.20.0",
+    "laspy[lazrs]>=2.7.0",
+    "matplotlib>=3.11.0",
+    "numpy>=2.5.1",
+    "pyproj>=3.7.2",
+    "rasterio>=1.5.0",
+    "requests>=2.34.2",
+    "scipy>=1.18.0",
+    "shapely>=2.1.2",
+    "trimesh>=4.12.2",
+]
