@@ -1,8 +1,9 @@
-# green_maps
+# crooked_tree_greens
 
 Simulation-ready 3D surface models of the putting greens at Crooked Tree Golf
 Course (Arthur Pack Regional Park, Tucson, AZ), built from public USGS 3DEP
-LiDAR. Per green: a 0.25 m heightmap (`.npz` + GeoTIFF), a triangle mesh
+LiDAR. Browse the green heatmaps at
+<https://jhoblitt.github.io/crooked_tree_greens/>. Per green: a 0.25 m heightmap (`.npz` + GeoTIFF), a triangle mesh
 (OBJ/GLB, centroid-local, Z-up, meters), slope/contour QC plots, and
 provenance metadata. Outputs feed a rigid-sphere-on-heightmap putting physics
 simulation.
