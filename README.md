@@ -29,6 +29,14 @@ meters. See `reports/qc_report.md` for per-green QC and caveats — the surfaces
 capture macro contours only; the source LiDAR's ~5-10 cm vertical noise floor
 hides sub-1% micro-break.
 
+## Development
+
+`uv run pytest` runs the plumbing regression suite (~6 minutes): per-stage
+tests over synthetic LiDAR tiles and polygons (no network, no real tiles
+needed) plus a mini end-to-end pipeline. Run it after any change to
+`scripts/` — it specifically guards against stale LAZ files blending into
+fits and stale or torn output directories passing the QC report.
+
 ## Data sources
 
 - LiDAR: USGS 3DEP work unit `AZ_PimaCounty_2021_B21` (acquired 2021-10-04),

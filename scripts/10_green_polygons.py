@@ -226,6 +226,13 @@ def green_feature(g):
     return {"type": "Feature", "properties": props, "geometry": mapping(g["poly"])}
 
 
+def uniquify_practice(feats):
+    """Practice greens share hole 0; give them collision-free output labels."""
+    practice = [f for f in feats if f["properties"]["hole"] == 0]
+    for i, f in enumerate(practice, 1):
+        f["properties"]["label"] = f"practice_{i}" if len(practice) > 1 else "practice"
+
+
 def overview_map(course_poly, feats, holes, missing):
     c = course_poly.centroid
     m = folium.Map(location=[c.y, c.x], zoom_start=16, tiles=None)
@@ -346,9 +353,7 @@ def main() -> int:
     greens = assign_holes(greens, holes)
     feats = sorted((green_feature(g) for g in greens),
                    key=lambda f: (f["properties"]["hole"], f["properties"]["osm_id"] or 0))
-    practice = [f for f in feats if f["properties"]["hole"] == 0]
-    for i, f in enumerate(practice, 1):
-        f["properties"]["label"] = f"practice_{i}" if len(practice) > 1 else "practice"
+    uniquify_practice(feats)
     (POLY_DIR / "greens.geojson").write_text(json.dumps(
         {"type": "FeatureCollection", "features": feats}, indent=1))
     print(f"  wrote {(POLY_DIR / 'greens.geojson').relative_to(ROOT)}")

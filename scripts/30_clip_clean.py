@@ -57,9 +57,29 @@ def clean(x, y, z):
     return keep, coef, float(np.sqrt(np.mean(resid2**2))), float(sigma), float(thresh)
 
 
+def manifest_tiles(tiles_meta):
+    """The LAZ set Stage 3 may read is exactly the Stage 2-validated manifest.
+
+    Anything else in data/raw (a superseded work unit's tiles, a hand-dropped
+    file) would otherwise blend silently into the fits while provenance still
+    cited the manifest.
+    """
+    names = [t["tile"] for t in tiles_meta["tiles"]]
+    missing = [n for n in names if not (RAW / n).exists()]
+    if missing:
+        sys.exit(f"HALT: manifest tiles missing from data/raw: {missing} — "
+                 f"rerun scripts/20_fetch_lidar.py")
+    extras = sorted(p.name for p in RAW.glob("*.laz") if p.name not in set(names))
+    if extras:
+        sys.exit(f"HALT: LAZ files in data/raw not in tiles_meta.json: {extras} — "
+                 f"remove them or rerun scripts/20_fetch_lidar.py")
+    return [RAW / n for n in sorted(names)]
+
+
 def main() -> int:
     tiles_meta = json.loads((RAW / "tiles_meta.json").read_text())
-    assert all(u == "meter" for t in tiles_meta["tiles"] for _, u in t["axis_units"]), \
+    assert all(u.lower().replace("metre", "meter") == "meter"
+               for t in tiles_meta["tiles"] for _, u in t["axis_units"]), \
         "Stage 2 should have halted: non-meter units"
 
     feats = json.loads((POLY_DIR / "greens.geojson").read_text())["features"]
@@ -77,7 +97,7 @@ def main() -> int:
             "tiles": set(),
         })
 
-    tile_paths = sorted(RAW.glob("*.laz"))
+    tile_paths = manifest_tiles(tiles_meta)
     for tp in tile_paths:
         with laspy.open(tp) as f:
             n_read = 0

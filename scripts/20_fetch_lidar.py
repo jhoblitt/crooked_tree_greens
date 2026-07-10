@@ -126,6 +126,35 @@ def inspect_headers(paths):
     return meta, total
 
 
+def verify_tiles(meta):
+    """Checkpoint: uniform expected CRS, meter units, full green coverage."""
+    horiz = {m["horizontal_epsg"] for m in meta}
+    # WKT authorities disagree on the spelling ("meter" vs "metre")
+    units = {tuple(u.lower().replace("metre", "meter") for _, u in m["axis_units"])
+             for m in meta}
+    print(f"horizontal CRS set: {horiz}, unit set: {units}")
+    if len(horiz) != 1 or None in horiz:
+        sys.exit("HALT: tiles disagree on horizontal CRS or CRS missing")
+    if horiz - {6341, 26912}:
+        sys.exit(f"HALT: unexpected horizontal CRS {horiz} — expected UTM 12N (6341/26912)")
+    if units != {("meter", "meter", "meter")}:
+        sys.exit(f"HALT: units are not uniformly meters: {units} — add ingest conversion")
+
+    from shapely.ops import unary_union as uu
+    cover = uu([box(m["mins"][0], m["mins"][1], m["maxs"][0], m["maxs"][1]).buffer(0.5)
+                for m in meta])
+    greens = json.loads((POLY_DIR / "greens.geojson").read_text())["features"]
+    gaps = []
+    for f in greens:
+        g = utm(shape(f["geometry"])).buffer(GREEN_BUFFER_M)
+        a = g.difference(cover).area
+        if a > 1.0:
+            gaps.append((f["properties"]["label"], a))
+    if gaps:
+        sys.exit(f"HALT: buffered greens not covered by downloaded tiles: {gaps}")
+    print("coverage: every buffered green fully inside downloaded tiles")
+
+
 def main() -> int:
     fp = acquisition_footprint()
     bbox = fp.bounds  # minx, miny, maxx, maxy in 4326
@@ -179,29 +208,7 @@ def main() -> int:
     (RAW / "tiles_meta.json").write_text(json.dumps(tiles_meta, indent=1))
 
     print(f"\nCHECKPOINT: {len(paths)} tiles, {total:,} points total")
-    horiz = {m["horizontal_epsg"] for m in meta}
-    units = {tuple(u for _, u in m["axis_units"]) for m in meta}
-    print(f"horizontal CRS set: {horiz}, unit set: {units}")
-    if len(horiz) != 1 or None in horiz:
-        sys.exit("HALT: tiles disagree on horizontal CRS or CRS missing")
-    if horiz - {6341, 26912}:
-        sys.exit(f"HALT: unexpected horizontal CRS {horiz} — expected UTM 12N (6341/26912)")
-    if units != {("meter", "meter", "meter")}:
-        sys.exit(f"HALT: units are not uniformly meters: {units} — add ingest conversion")
-
-    from shapely.ops import unary_union as uu
-    cover = uu([box(m["mins"][0], m["mins"][1], m["maxs"][0], m["maxs"][1]).buffer(0.5)
-                for m in meta])
-    greens = json.loads((POLY_DIR / "greens.geojson").read_text())["features"]
-    gaps = []
-    for f in greens:
-        g = utm(shape(f["geometry"])).buffer(GREEN_BUFFER_M)
-        a = g.difference(cover).area
-        if a > 1.0:
-            gaps.append((f["properties"]["label"], a))
-    if gaps:
-        sys.exit(f"HALT: buffered greens not covered by downloaded tiles: {gaps}")
-    print("coverage: every buffered green fully inside downloaded tiles")
+    verify_tiles(meta)
     return 0
 
 

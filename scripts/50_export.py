@@ -8,6 +8,7 @@ contours.png (2.5 cm), meta.json -> outputs/greens/<label>/.
 
 import datetime
 import json
+import shutil
 from pathlib import Path
 
 import matplotlib
@@ -142,8 +143,12 @@ def export_green(feat):
     ci, cj = np.argmin(np.abs(gy - cy)), np.argmin(np.abs(gx - cx))
     cz = float(zgrid[ci, cj])
 
-    out = OUT / label
-    out.mkdir(parents=True, exist_ok=True)
+    # Stage 6 rejects leftover .tmp dirs, so an interrupted export can never
+    # pass off a half-overwritten green as current.
+    out = OUT / f"{label}.tmp"
+    if out.exists():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
 
     z_north_up = zgrid[::-1]
     np.savez_compressed(
@@ -207,6 +212,11 @@ def export_green(feat):
         "vertical_fidelity": CAVEAT,
     }
     (out / "meta.json").write_text(json.dumps(meta, indent=1))
+
+    final = OUT / label
+    if final.exists():
+        shutil.rmtree(final)
+    out.rename(final)
     return meta
 
 

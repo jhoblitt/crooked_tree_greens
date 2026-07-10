@@ -3,9 +3,11 @@
 
 import datetime
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+POLY_DIR = ROOT / "data" / "polygons"
 OUT = ROOT / "outputs" / "greens"
 REPORTS = ROOT / "reports"
 
@@ -14,11 +16,41 @@ ARTIFACTS = ["heightmap.npz", "heightmap.tif", "mesh.obj", "mesh.glb",
              "slope_heatmap.png", "contours.png", "meta.json"]
 
 
+def reconcile_outputs():
+    """Only greens in the current manifest may be indexed as current.
+
+    Output dirs are overwritten in place across reruns, so a green that was
+    renamed or reassigned leaves its old dir behind — and a leftover .tmp dir
+    means Stage 5 died mid-export. Either way, globbing outputs/ would report
+    stale artifacts as current; halt instead.
+    """
+    manifest = {f["properties"]["label"]
+                for f in json.loads((POLY_DIR / "greens.geojson").read_text())["features"]}
+    dirs = {p.name for p in OUT.iterdir() if p.is_dir()}
+    torn = sorted(d for d in dirs if d.endswith(".tmp"))
+    if torn:
+        sys.exit(f"HALT: interrupted Stage 5 export left {torn} — "
+                 f"rerun scripts/50_export.py")
+    orphans = sorted(dirs - manifest)
+    if orphans:
+        sys.exit(f"HALT: outputs/greens dirs not in data/polygons/greens.geojson: "
+                 f"{orphans} — stale from a renamed/removed green; delete them or "
+                 f"rerun stages 1-5")
+    return sorted(manifest - dirs)
+
+
 def main() -> int:
-    metas = sorted(
-        (json.loads(p.read_text()) for p in OUT.glob("*/meta.json")),
-        key=lambda m: (m["hole"] == 0, m["hole"], m["label"]),
-    )
+    unexported = reconcile_outputs()
+    if unexported:
+        print(f"note: manifest greens with no exports yet: {unexported}")
+    metas = []
+    for p in OUT.glob("*/meta.json"):
+        m = json.loads(p.read_text())
+        if m["label"] != p.parent.name:
+            sys.exit(f"HALT: {p} claims label {m['label']!r} but lives in "
+                     f"{p.parent.name!r} — stale or hand-moved export")
+        metas.append(m)
+    metas.sort(key=lambda m: (m["hole"] == 0, m["hole"], m["label"]))
     if not metas:
         raise SystemExit("no exported greens found — run stages 1-5 first")
 

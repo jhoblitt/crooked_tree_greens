@@ -1,7 +1,7 @@
 [project]
 name = "crooked-tree-greens"
 version = "0.1.0"
-description = "Add your description here"
+description = "LiDAR-derived 3D surface models of Crooked Tree Golf Course putting greens"
 requires-python = ">=3.13"
 dependencies = [
     "folium>=0.20.0",
@@ -15,3 +15,12 @@ dependencies = [
     "shapely>=2.1.2",
     "trimesh>=4.12.2",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
