@@ -10,6 +10,7 @@ Final deliverable per green: a regular-grid heightmap (meters, Z-up, local origi
 
 - Work stage by stage (Stage 0 → 7). Each stage is a numbered, idempotent script in `scripts/`. Cache all downloads; never re-fetch on rerun.
 - **Halt on QC failure** at any checkpoint and report, rather than proceeding with bad data.
+- After any change to pipeline plumbing (`scripts/*.py`), run `uv run pytest` (synthetic-data regression suite in `tests/`, ~6 min, no network) and get it green before committing.
 - All geometry math in a **projected metric CRS (NAD83(2011) / UTM 12N, EPSG:6341; EPSG:26912 acceptable)**. Never compute slopes or distances in EPSG:3857 or 4326.
 - Units: meters everywhere. Normalize immediately on ingest; some AZ deliverables are in feet — check LAZ headers, do not assume.
 - Python via `uv` (`uv init`, `uv add ...`). Prefer pure-pip dependencies; PDAL is an optional fast path only if already installed or trivially available (e.g., `mamba install -c conda-forge pdal`).
