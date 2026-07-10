@@ -58,7 +58,10 @@ def grid_mesh(zgrid, gx, gy, cx, cy, cz):
         gx[jj[valid]] - cx, gy[ii[valid]] - cy, zgrid[valid] - cz,
     ])
     q = valid[:-1, :-1] & valid[:-1, 1:] & valid[1:, 1:] & valid[1:, :-1]
-    a = vid[:-1, :-1][q]; b = vid[:-1, 1:][q]; c = vid[1:, 1:][q]; d = vid[1:, :-1][q]
+    a = vid[:-1, :-1][q]
+    b = vid[:-1, 1:][q]
+    c = vid[1:, 1:][q]
+    d = vid[1:, :-1][q]
     faces = np.concatenate([np.column_stack([a, b, c]), np.column_stack([a, c, d])])
     return trimesh.Trimesh(vertices=verts, faces=faces, process=False)
 
@@ -92,10 +95,12 @@ def slope_heatmap(path, title, slope, aspect_deg, in_green, gx, gy, cx, cy, poly
         ax.plot(rx, ry, color="white", lw=0.9, ls=(0, (4, 3)), alpha=0.8)
 
     ax.set_aspect("equal")
-    ax.set_xlabel("east of centroid [m]"); ax.set_ylabel("north of centroid [m]")
+    ax.set_xlabel("east of centroid [m]")
+    ax.set_ylabel("north of centroid [m]")
     ax.set_title(title, color=INK, fontsize=10)
     fig.tight_layout()
-    fig.savefig(path); plt.close(fig)
+    fig.savefig(path)
+    plt.close(fig)
 
 
 def contour_plot(path, title, zgrid, in_green, gx, gy, cx, cy, cz, poly):
@@ -110,7 +115,7 @@ def contour_plot(path, title, zgrid, in_green, gx, gy, cx, cy, cz, poly):
 
     fig, ax = plt.subplots(figsize=(7.2, 6.4))
     ax.contourf(lx, ly, zg, levels=levels, cmap="Blues_r", alpha=0.35)
-    cs = ax.contour(lx, ly, zg, levels=levels, colors="#5b7fa6", linewidths=0.5)
+    ax.contour(lx, ly, zg, levels=levels, colors="#5b7fa6", linewidths=0.5)
     csi = ax.contour(lx, ly, zg, levels=index, colors="#2f4f74", linewidths=1.1)
     ax.clabel(csi, fmt=lambda v: f"{v:+.2f}", fontsize=7, colors=INK)
 
@@ -118,10 +123,12 @@ def contour_plot(path, title, zgrid, in_green, gx, gy, cx, cy, cz, poly):
         ax.plot(rx, ry, color=INK, lw=1.2)
 
     ax.set_aspect("equal")
-    ax.set_xlabel("east of centroid [m]"); ax.set_ylabel("north of centroid [m]")
+    ax.set_xlabel("east of centroid [m]")
+    ax.set_ylabel("north of centroid [m]")
     ax.set_title(title, color=INK, fontsize=10)
     fig.tight_layout()
-    fig.savefig(path); plt.close(fig)
+    fig.savefig(path)
+    plt.close(fig)
 
 
 def export_green(feat):
@@ -208,7 +215,7 @@ def export_green(feat):
         "sustained_window_m": fit["sustained_window_m"],
         "elevation_range_on_green_m": round(float(zvals.max() - zvals.min()), 3),
         "flags": fit["flags"],
-        "generated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+        "generated": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
         "vertical_fidelity": CAVEAT,
     }
     (out / "meta.json").write_text(json.dumps(meta, indent=1))

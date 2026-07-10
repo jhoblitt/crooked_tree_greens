@@ -36,7 +36,7 @@ TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:6341", always_xy=True).transfor
 
 
 def gps_to_date(t_adjusted: float) -> str:
-    epoch = datetime.datetime(1980, 1, 6, tzinfo=datetime.timezone.utc)
+    epoch = datetime.datetime(1980, 1, 6, tzinfo=datetime.UTC)
     return (epoch + datetime.timedelta(seconds=t_adjusted + 1e9)).date().isoformat()
 
 
@@ -133,7 +133,9 @@ def main() -> int:
             halts.append((g["label"], 0.0))
             print(f"{g['label']:>10} {'0':>8}  NO POINTS")
             continue
-        x = np.concatenate(g["xs"]); y = np.concatenate(g["ys"]); z = np.concatenate(g["zs"])
+        x = np.concatenate(g["xs"])
+        y = np.concatenate(g["ys"])
+        z = np.concatenate(g["zs"])
         keep, coef, rms, sigma, thresh = clean(x, y, z)
         xk, yk, zk = x[keep], y[keep], z[keep]
 

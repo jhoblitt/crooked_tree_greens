@@ -3,12 +3,17 @@
 import json
 
 import pytest
+from conftest import (
+    BASE_E,
+    BASE_N,
+    load_script,
+    make_greens_geojson,
+    make_hole_lines_geojson,
+    make_tile,
+    tile_header_meta,
+)
 from shapely.geometry import shape
 from shapely.ops import transform as shp_transform
-
-from conftest import (BASE_E, BASE_N, load_script, make_greens_geojson,
-                      make_hole_lines_geojson, make_tile, make_tiles_meta,
-                      tile_header_meta)
 
 mod = load_script("20_fetch_lidar")
 

@@ -3,7 +3,6 @@
 import json
 
 import pytest
-
 from conftest import BASE_E, BASE_N, load_script, make_fake_export, make_greens_geojson
 
 mod = load_script("60_report")

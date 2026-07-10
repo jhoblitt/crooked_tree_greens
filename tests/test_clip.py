@@ -5,9 +5,15 @@ import json
 
 import numpy as np
 import pytest
-
-from conftest import (BASE_E, BASE_N, gps_adjusted, load_script,
-                      make_greens_geojson, make_tile, make_tiles_meta)
+from conftest import (
+    BASE_E,
+    BASE_N,
+    gps_adjusted,
+    load_script,
+    make_greens_geojson,
+    make_tile,
+    make_tiles_meta,
+)
 
 mod = load_script("30_clip_clean")
 

@@ -2,7 +2,7 @@
 
 import json
 
-from conftest import load_script, make_fake_export
+from conftest import make_fake_export
 
 
 def seed_outputs(m):

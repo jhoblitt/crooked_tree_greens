@@ -9,6 +9,7 @@ LiDAR tiles.
 import datetime
 import importlib.util
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -16,7 +17,6 @@ import laspy
 import numpy as np
 import pytest
 from pyproj import CRS, Transformer
-from shapely.geometry import mapping, Point
 
 REPO = Path(__file__).resolve().parent.parent
 SCRIPTS = REPO / "scripts"
@@ -46,25 +46,65 @@ PATH_CONSTANTS = ("ROOT", "POLY_DIR", "CACHE_DIR", "RAW", "INTERIM", "OUT",
                   "REPORTS", "SITE")
 
 
+def _rebind(mp, root, *stems):
+    mods = []
+    for stem in stems:
+        mod = load_script(stem)
+        for const in PATH_CONSTANTS:
+            if not hasattr(mod, const):
+                continue
+            rel = getattr(mod, const).relative_to(REPO)
+            target = root / rel
+            target.mkdir(parents=True, exist_ok=True)
+            mp.setattr(mod, const, target)
+        mods.append(mod)
+    return mods[0] if len(mods) == 1 else mods
+
+
 @pytest.fixture
 def sandbox(tmp_path, monkeypatch):
     """Rebind a script module's path constants into tmp_path and mkdir them."""
 
     def _sandbox(*stems):
-        mods = []
-        for stem in stems:
-            mod = load_script(stem)
-            for const in PATH_CONSTANTS:
-                if not hasattr(mod, const):
-                    continue
-                rel = getattr(mod, const).relative_to(REPO)
-                target = tmp_path / rel
-                target.mkdir(parents=True, exist_ok=True)
-                monkeypatch.setattr(mod, const, target)
-            mods.append(mod)
-        return mods[0] if len(mods) == 1 else mods
+        return _rebind(monkeypatch, tmp_path, *stems)
 
     return _sandbox
+
+
+@pytest.fixture(scope="session")
+def course_build(tmp_path_factory):
+    """Stages 3+4 run ONCE on the shared synthetic course.
+
+    Tests must not mutate this tree — clone it via staged_course. Noise is
+    0.04 m (≈ real LiDAR) and the lambda ladder starts at real smoothing
+    levels: with the RMS floor already inside the 3-6 cm band, tiny lambdas
+    would legally win the "smallest in-band" rule with a noise-tracking fit,
+    which is useless for slope/aspect contract tests.
+    """
+    root = tmp_path_factory.mktemp("course_build")
+    mp = pytest.MonkeyPatch()
+    try:
+        m30, m40 = _rebind(mp, root, "30_clip_clean", "40_fit_surface")
+        mp.setattr(m40, "FIT_MAX_PTS", 1200)
+        mp.setattr(m40, "LAMBDAS", np.array([100.0, 300.0, 1000.0]))
+        make_greens_geojson(m30.POLY_DIR / "greens.geojson",
+                            [("hole_01", 1, BASE_E, BASE_N, 7.0)])
+        tile = make_tile(m30.RAW / "tile_a.laz", BASE_E - 40, BASE_N - 40,
+                         size=80, density=4.0, noise=0.04)
+        make_tiles_meta(m30.RAW, [tile])
+        assert m30.main() == 0
+        assert m40.main() == 0
+    finally:
+        mp.undo()
+    return root
+
+
+@pytest.fixture
+def staged_course(course_build, tmp_path, monkeypatch):
+    """A private, mutable copy of the built course, all stage modules rebound."""
+    shutil.copytree(course_build, tmp_path, dirs_exist_ok=True)
+    return _rebind(monkeypatch, tmp_path, "30_clip_clean", "40_fit_surface",
+                   "50_export", "60_report")
 
 
 def utm_disk(cx, cy, r=10.0, n=14):
@@ -109,9 +149,9 @@ def make_hole_lines_geojson(path, holes):
 
 
 def gps_adjusted(date=datetime.date(2021, 10, 4)):
-    epoch = datetime.datetime(1980, 1, 6, tzinfo=datetime.timezone.utc)
+    epoch = datetime.datetime(1980, 1, 6, tzinfo=datetime.UTC)
     dt = datetime.datetime(date.year, date.month, date.day, 12,
-                           tzinfo=datetime.timezone.utc)
+                           tzinfo=datetime.UTC)
     return (dt - epoch).total_seconds() - 1e9
 
 
@@ -121,7 +161,7 @@ def surface_z(x, y):
             + 0.15 * np.exp(-(((x - BASE_E) ** 2 + (y - BASE_N) ** 2) / 60.0)))
 
 
-def write_laz(path, x, y, z, classification=2, rng=None):
+def write_laz(path, x, y, z, classification=2):
     """Write a LAS 1.4 / point-format-6 LAZ with the compound course CRS."""
     header = laspy.LasHeader(version="1.4", point_format=6)
     header.add_crs(CRS.from_user_input("EPSG:6341+5703"))

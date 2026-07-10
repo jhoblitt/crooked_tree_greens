@@ -31,11 +31,15 @@ hides sub-1% micro-break.
 
 ## Development
 
-`uv run pytest` runs the plumbing regression suite (~6 minutes): per-stage
-tests over synthetic LiDAR tiles and polygons (no network, no real tiles
-needed) plus a mini end-to-end pipeline. Run it after any change to
-`scripts/` — it specifically guards against stale LAZ files blending into
-fits and stale or torn output directories passing the QC report.
+`uv run pytest` runs the regression suite (~1 minute): per-stage tests over
+synthetic LiDAR tiles and polygons (no network, no real tiles needed), a mini
+end-to-end pipeline, integrity checks of the committed artifact tree, and a
+replay of the committed OSM responses through the polygon-parsing stage. Run
+it after any change to `scripts/` — it specifically guards against stale LAZ
+files blending into fits and stale or torn output directories passing the QC
+report. `uv run pytest -m "not slow"` skips the end-to-end run for a ~15 s
+loop, and `uv run ruff check .` lints. CI (`.github/workflows/ci.yml`) runs
+both on every push and pull request.
 
 ## Data sources
 

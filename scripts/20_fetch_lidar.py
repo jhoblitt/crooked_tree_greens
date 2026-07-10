@@ -15,9 +15,10 @@ from pathlib import Path
 
 import laspy
 import requests
-from pyproj import CRS, Transformer
+from pyproj import Transformer
 from shapely.geometry import LineString, Point, box, shape
-from shapely.ops import transform as shp_transform, unary_union
+from shapely.ops import transform as shp_transform
+from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
 POLY_DIR = ROOT / "data" / "polygons"

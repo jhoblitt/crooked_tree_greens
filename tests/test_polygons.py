@@ -2,10 +2,8 @@
 
 import json
 
-import pytest
-from shapely.geometry import LineString, shape
-
 from conftest import BASE_E, BASE_N, TO_LL, load_script, utm_disk
+from shapely.geometry import LineString, shape
 
 mod = load_script("10_green_polygons")
 
@@ -111,3 +109,30 @@ def test_load_manual_merges_polygons_and_skips_lines(sandbox):
 def test_load_manual_absent_is_empty(sandbox):
     m = sandbox("10_green_polygons")
     assert m.load_manual() == []
+
+
+def test_stage1_parsing_replays_committed_cache(sandbox, monkeypatch):
+    """Course + greens + hole-line parsing against the real committed Overpass
+    and Nominatim responses in data/polygons/cache — network hard-disabled."""
+    from conftest import REPO
+
+    m = sandbox("10_green_polygons")
+    monkeypatch.setattr(m, "CACHE_DIR", REPO / "data" / "polygons" / "cache")
+
+    def no_network(*a, **k):
+        raise AssertionError("cache miss: test tried to reach the network")
+
+    monkeypatch.setattr(m.requests, "get", no_network)
+    monkeypatch.setattr(m.requests, "post", no_network)
+
+    course_el, course_poly = m.fetch_course()
+    assert course_el["id"] == 263321891
+    assert course_poly.is_valid
+
+    greens, holes = m.fetch_course_features(course_poly)
+    assert len(greens) == 8
+    assert sorted(h["ref"] for h in holes) == list(range(1, 19))
+
+    assigned = m.assign_holes(greens, holes)
+    assert {g["hole"] for g in assigned if g["hole"]} == {1, 2, 9, 10, 11, 18}
+    assert sum(1 for g in assigned if g["hole"] is None) == 2  # practice greens

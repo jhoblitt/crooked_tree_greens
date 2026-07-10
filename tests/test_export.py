@@ -6,29 +6,11 @@ import numpy as np
 import pytest
 import rasterio
 import trimesh
-
-from conftest import (BASE_E, BASE_N, load_script, make_greens_geojson,
-                      make_tile, make_tiles_meta)
+from conftest import BASE_E, BASE_N
 
 
-@pytest.fixture
-def staged(sandbox, monkeypatch):
-    """Stages 3+4 on one synthetic green, ready for Stage 5."""
-    m30, m40, m50, m60 = sandbox("30_clip_clean", "40_fit_surface",
-                                 "50_export", "60_report")
-    make_greens_geojson(m30.POLY_DIR / "greens.geojson",
-                        [("hole_01", 1, BASE_E, BASE_N, 7.0)])
-    tile = make_tile(m30.RAW / "tile_a.laz", BASE_E - 40, BASE_N - 40,
-                     size=80, density=4.0)
-    make_tiles_meta(m30.RAW, [tile])
-    monkeypatch.setattr(m40, "FIT_MAX_PTS", 1200)
-    monkeypatch.setattr(m40, "LAMBDAS", np.logspace(-2, 3, 6))
-    assert m30.main() == 0 and m40.main() == 0
-    return m30, m40, m50, m60
-
-
-def test_export_writes_all_artifacts(staged):
-    m30, m40, m50, m60 = staged
+def test_export_writes_all_artifacts(staged_course):
+    m30, m40, m50, m60 = staged_course
     assert m50.main() == 0
     d = m50.OUT / "hole_01"
     for a in ("heightmap.npz", "heightmap.tif", "mesh.obj", "mesh.glb",
@@ -37,8 +19,8 @@ def test_export_writes_all_artifacts(staged):
     assert not (m50.OUT / "hole_01.tmp").exists()
 
 
-def test_heightmap_is_north_up_and_tif_matches(staged):
-    m30, m40, m50, m60 = staged
+def test_heightmap_is_north_up_masked_and_tif_matches(staged_course):
+    m30, m40, m50, m60 = staged_course
     assert m50.main() == 0
     d = m50.OUT / "hole_01"
     h = np.load(d / "heightmap.npz")
@@ -50,17 +32,26 @@ def test_heightmap_is_north_up_and_tif_matches(staged):
     assert float(h["y0"]) == pytest.approx(float(grid["y0"]) + (ny - 1) * 0.25)
     # synthetic plane falls to the north (-0.01*y): northern rows sit lower
     assert np.nanmean(z[:5]) < np.nanmean(z[-5:])
+    # NaN outside the buffered polygon: corners of the bbox are masked
+    assert np.isnan(z[0, 0]) and np.isnan(z[-1, -1])
+    assert np.isnan(z).any() and np.isfinite(z).any()
 
     with rasterio.open(d / "heightmap.tif") as src:
         band = src.read(1)
         assert src.crs.to_epsg() == 6341
         assert src.res == (0.25, 0.25)
+        assert src.tags()["AREA_OR_POINT"] == "Point"
         assert np.array_equal(np.isfinite(band), np.isfinite(z))
         assert np.nanmax(np.abs(band - z)) < 1e-6
 
+    meta = json.loads((d / "meta.json").read_text())
+    assert meta["grid_origin_north_up"] == [pytest.approx(float(h["x0"])),
+                                            pytest.approx(float(h["y0"]))]
+    assert meta["grid_shape"] == list(z.shape)
 
-def test_mesh_is_local_and_well_formed(staged):
-    m30, m40, m50, m60 = staged
+
+def test_mesh_is_local_and_well_formed(staged_course):
+    m30, m40, m50, m60 = staged_course
     assert m50.main() == 0
     mesh = trimesh.load(m50.OUT / "hole_01" / "mesh.obj")
     assert len(mesh.vertices) > 100 and len(mesh.faces) > 100
@@ -74,9 +65,9 @@ def test_mesh_is_local_and_well_formed(staged):
     assert abs(lo[0] - BASE_E) < 1.0 and abs(lo[1] - BASE_N) < 1.0
 
 
-def test_interrupted_export_leaves_old_dir_and_tmp(staged):
+def test_interrupted_export_leaves_old_dir_and_tmp(staged_course):
     """Regression: a mid-export crash must not tear the published green."""
-    m30, m40, m50, m60 = staged
+    m30, m40, m50, m60 = staged_course
     assert m50.main() == 0
     sentinel = (m50.OUT / "hole_01" / "meta.json").read_bytes()
 

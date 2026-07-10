@@ -72,18 +72,18 @@ def main() -> int:
     add = lines.append
     add("# Crooked Tree Greens — QC report")
     add("")
-    add(f"Generated {datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')}"
+    add(f"Generated {datetime.datetime.now(datetime.UTC).isoformat(timespec='seconds')}"
         f" · status: **{'PARTIAL' if partial else 'COMPLETE'}**"
         f" ({len(have_holes)}/18 hole greens + {n_practice} practice)")
     add("")
-    add(f"- Course: Crooked Tree Golf Course, Arthur Pack Regional Park, Tucson AZ "
-        f"(OSM way 263321891; Nominatim cross-check passed)")
+    add("- Course: Crooked Tree Golf Course, Arthur Pack Regional Park, Tucson AZ "
+        "(OSM way 263321891; Nominatim cross-check passed)")
     add(f"- LiDAR source: {', '.join(wu)} (USGS 3DEP, public domain), "
         f"acquisition {', '.join(dates)}, tiles: {', '.join(tiles)}")
-    add(f"- CRS: horizontal EPSG:6341 NAD83(2011)/UTM 12N (m); vertical EPSG:5703 NAVD88 (m), GEOID18")
-    add(f"- Method: class-2 returns, 12 m collar buffer, 3.5×MAD plane-residual outlier "
-        f"rejection, thin-plate-spline RBF on plane residuals, λ swept to land fit RMS in "
-        f"3–6 cm, 0.25 m grid")
+    add("- CRS: horizontal EPSG:6341 NAD83(2011)/UTM 12N (m); vertical EPSG:5703 NAVD88 (m), GEOID18")
+    add("- Method: class-2 returns, 12 m collar buffer, 3.5×MAD plane-residual outlier "
+        "rejection, thin-plate-spline RBF on plane residuals, λ swept to land fit RMS in "
+        "3–6 cm, 0.25 m grid")
     add("")
     if partial:
         add(f"## ⚠ Missing greens: holes {', '.join(map(str, missing_holes))}")
@@ -162,7 +162,7 @@ def main() -> int:
         "source_work_units": wu,
         "acquisition_dates": dates,
         "vertical_fidelity": metas[0]["vertical_fidelity"],
-        "generated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+        "generated": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
         "greens": [
             {
                 "label": m["label"],
