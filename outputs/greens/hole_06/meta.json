@@ -40,6 +40,35 @@
  "sustained_window_m": 1.0,
  "elevation_range_on_green_m": 0.714,
  "flags": [],
- "generated": "2026-07-06T20:18:59+00:00",
+ "pin_zones": {
+  "definition": "USGA-guided legal hole location: on the putting surface, \u22653 m from the edge, macro slope \u2264 tier over a 0.5 m cup bench",
+  "edge_setback_m": 3.0,
+  "cup_bench_radius_m": 0.5,
+  "headline_tier": "standard",
+  "legal_area_m2": 14.8,
+  "legal_fraction": 0.0327,
+  "scarce_legal_area": false,
+  "tiers": {
+   "traditional": {
+    "slope_max_pct": 3.0,
+    "area_m2": 165.6,
+    "fraction_of_green": 0.366,
+    "n_zones": 3
+   },
+   "standard": {
+    "slope_max_pct": 2.0,
+    "area_m2": 14.8,
+    "fraction_of_green": 0.0327,
+    "n_zones": 5
+   },
+   "premium": {
+    "slope_max_pct": 1.5,
+    "area_m2": 0.1,
+    "fraction_of_green": 0.0001,
+    "n_zones": 1
+   }
+  }
+ },
+ "generated": "2026-07-16T04:01:16+00:00",
  "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"
 }

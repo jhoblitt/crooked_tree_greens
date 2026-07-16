@@ -82,6 +82,44 @@ def test_missing_artifact_fails(sandbox, monkeypatch):
     assert m.main() == 1
 
 
+def test_report_and_index_include_pin_zones(sandbox, monkeypatch):
+    m = sandbox("60_report")
+    monkeypatch.setattr(m, "EXPECTED_HOLES", {1})
+    manifest(m, [("hole_01", 1)])
+    make_fake_export(m.OUT, "hole_01", 1)
+    assert m.main() == 0
+    report = (m.REPORTS / "qc_report.md").read_text()
+    assert "legal pin m² (%)" in report
+    assert "## Legal pin zones" in report
+    assert "120" in report  # the fake export's standard legal area
+    idx = json.loads((m.OUT / "index.json").read_text())
+    g = idx["greens"][0]
+    assert g["legal_pin_area_m2"] == 120.0 and g["scarce_legal_area"] is False
+
+
+def test_report_flags_scarce_legal_area(sandbox, monkeypatch):
+    m = sandbox("60_report")
+    monkeypatch.setattr(m, "EXPECTED_HOLES", {1})
+    manifest(m, [("hole_01", 1)])
+    scarce = {
+        "definition": "test", "edge_setback_m": 3.0, "cup_bench_radius_m": 0.5,
+        "headline_tier": "standard", "legal_area_m2": 3.0, "legal_fraction": 0.01,
+        "scarce_legal_area": True,
+        "tiers": {
+            "traditional": {"slope_max_pct": 3.0, "area_m2": 20.0,
+                            "fraction_of_green": 0.07, "n_zones": 1},
+            "standard": {"slope_max_pct": 2.0, "area_m2": 3.0,
+                         "fraction_of_green": 0.01, "n_zones": 1},
+            "premium": {"slope_max_pct": 1.5, "area_m2": 0.0,
+                        "fraction_of_green": 0.0, "n_zones": 0},
+        },
+    }
+    make_fake_export(m.OUT, "hole_01", 1, pin_zones=scarce)
+    assert m.main() == 0
+    report = (m.REPORTS / "qc_report.md").read_text()
+    assert "Scarce legal area" in report and "hole_01" in report
+
+
 def test_flags_surface_in_report(sandbox, monkeypatch):
     m = sandbox("60_report")
     monkeypatch.setattr(m, "EXPECTED_HOLES", {1})

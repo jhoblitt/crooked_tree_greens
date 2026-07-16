@@ -13,7 +13,9 @@ REPORTS = ROOT / "reports"
 
 EXPECTED_HOLES = set(range(1, 19))
 ARTIFACTS = ["heightmap.npz", "heightmap.tif", "mesh.obj", "mesh.glb",
-             "slope_heatmap.png", "contours.png", "meta.json"]
+             "slope_heatmap.png", "contours.png",
+             "pin_zones.npz", "pin_zones.tif", "pin_zones.png", "pin_zones.geojson",
+             "meta.json"]
 
 
 def reconcile_outputs():
@@ -96,21 +98,43 @@ def main() -> int:
         add("")
     add("## Greens")
     add("")
-    add("| green | hole | area m² | pts/m² | λ | fit RMS cm | band | slope μ % | slope max* % | Δz m | flags |")
-    add("|---|---|---|---|---|---|---|---|---|---|---|")
+    add("| green | hole | area m² | pts/m² | λ | fit RMS cm | band | slope μ % "
+        "| slope max* % | Δz m | legal pin m² (%) | flags |")
+    add("|---|---|---|---|---|---|---|---|---|---|---|---|")
     for m in metas:
+        pz = m["pin_zones"]
         add(f"| [{m['label']}](../outputs/greens/{m['label']}/slope_heatmap.png) "
-            f"([contours](../outputs/greens/{m['label']}/contours.png)) "
+            f"([contours](../outputs/greens/{m['label']}/contours.png), "
+            f"[pins](../outputs/greens/{m['label']}/pin_zones.png)) "
             f"| {m['hole'] or '—'} | {m['green_area_m2']:.0f} "
             f"| {m['class2_density_on_green_pts_m2']:.1f} | {m['lambda']:.3g} "
             f"| {m['fit_rms_m']*100:.1f} | {m['fit_band_note']} "
             f"| {m['slope_mean_pct']:.2f} | {m['slope_max_sustained_pct']:.2f} "
             f"| {m['elevation_range_on_green_m']:.2f} "
+            f"| {pz['legal_area_m2']:.0f} ({pz['legal_fraction']*100:.0f}%) "
             f"| {'; '.join(m['flags']) if m['flags'] else '—'} |")
     add("")
     add("`slope max*` = max slope sustained over a 1 m window on the green. "
         "Density flag threshold 1.5 pts/m², halt threshold 0.8 pts/m² — no green "
         "is below either.")
+    add("")
+    add("## Legal pin zones")
+    add("")
+    scarce = [m for m in metas if m["pin_zones"]["scarce_legal_area"]]
+    add("`legal pin` is the **standard** tier (≤2% macro slope over a 0.5 m cup bench, "
+        "≥3 m from the green edge) — a USGA-guided estimate of where a hole could be "
+        "fairly cut. Two looser/stricter tiers (traditional ≤3%, premium ≤1.5%) are in "
+        "each green's `pin_zones.png`/`.tif`/`.geojson`/`.npz`. This uses macro slope "
+        "only (same caveat as the surfaces), so treat zones as guidance, not survey.")
+    add("")
+    if scarce:
+        parts = ", ".join(f"{m['label']} ({m['pin_zones']['legal_area_m2']:.0f} m²)"
+                          for m in scarce)
+        add(f"**Scarce legal area** (< 10 m² at standard tier): {parts}. These are the "
+            "steepest greens — hole_13 and hole_18 have no ≤3% spot anywhere, consistent "
+            "with their slope flags; verify the polygons before trusting a zero.")
+    else:
+        add("Every green has ample legal pin area.")
     add("")
     add("## Flagged items")
     add("")
@@ -176,6 +200,9 @@ def main() -> int:
                 "slope_mean_pct": m["slope_mean_pct"],
                 "elevation_range_m": m["elevation_range_on_green_m"],
                 "fit_rms_m": m["fit_rms_m"],
+                "legal_pin_area_m2": m["pin_zones"]["legal_area_m2"],
+                "legal_pin_fraction": m["pin_zones"]["legal_fraction"],
+                "scarce_legal_area": m["pin_zones"]["scarce_legal_area"],
                 "flags": m["flags"],
                 "needs_review": m["needs_review"],
             }

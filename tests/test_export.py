@@ -50,6 +50,47 @@ def test_heightmap_is_north_up_masked_and_tif_matches(staged_course):
     assert meta["grid_shape"] == list(z.shape)
 
 
+def test_pin_zone_artifacts_are_consistent(staged_course):
+    m30, m40, m50, m60 = staged_course
+    assert m50.main() == 0
+    d = m50.OUT / "hole_01"
+    for a in ("pin_zones.npz", "pin_zones.tif", "pin_zones.png", "pin_zones.geojson"):
+        assert (d / a).exists(), a
+
+    grid = np.load(m40.INTERIM / "hole_01_grid.npz")
+    in_green = grid["in_green"]
+    pz = np.load(d / "pin_zones.npz")
+    cls = pz["tier_class"]
+    # same grid as the heightmap, north-up
+    h = np.load(d / "heightmap.npz")
+    assert cls.shape == h["z"].shape
+    assert float(pz["y0"]) == pytest.approx(float(h["y0"]))
+    # only the documented class codes appear
+    assert set(np.unique(cls)).issubset({0, 1, 2, 3, 255})
+    # legal cells are a subset of the on-green mask (north-up in_green)
+    legal = (cls != 255) & (cls >= 1)
+    assert legal[~in_green[::-1]].sum() == 0
+
+    with rasterio.open(d / "pin_zones.tif") as src:
+        band = src.read(1)
+        assert src.crs.to_epsg() == 6341
+        assert src.nodata == 255
+        assert np.array_equal(band, cls.astype(band.dtype))
+
+    meta = json.loads((d / "meta.json").read_text())["pin_zones"]
+    std_area = ((cls != 255) & (cls >= 2)).sum() * 0.25 * 0.25
+    assert meta["legal_area_m2"] == pytest.approx(std_area, abs=0.3)
+    assert meta["tiers"]["premium"]["area_m2"] <= meta["tiers"]["standard"]["area_m2"]
+
+    gj = json.loads((d / "pin_zones.geojson").read_text())
+    tiers = {f["properties"]["tier"] for f in gj["features"]}
+    assert tiers.issubset({"standard", "premium"})
+    std_vec = sum(f["properties"]["area_m2"] for f in gj["features"]
+                  if f["properties"]["tier"] == "standard")
+    # vector area of the standard tier matches the raster area within a cell or two
+    assert std_vec == pytest.approx(std_area, abs=3.0)
+
+
 def test_mesh_is_local_and_well_formed(staged_course):
     m30, m40, m50, m60 = staged_course
     assert m50.main() == 0

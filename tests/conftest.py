@@ -101,10 +101,17 @@ def course_build(tmp_path_factory):
 
 @pytest.fixture
 def staged_course(course_build, tmp_path, monkeypatch):
-    """A private, mutable copy of the built course, all stage modules rebound."""
+    """A private, mutable copy of the built course with pin zones computed.
+
+    Returns the (clip, fit, export, report) modules; Stage 45 is run here so
+    the export module finds the <label>_pins.npz it now requires.
+    """
     shutil.copytree(course_build, tmp_path, dirs_exist_ok=True)
-    return _rebind(monkeypatch, tmp_path, "30_clip_clean", "40_fit_surface",
-                   "50_export", "60_report")
+    m30, m40, m45, m50, m60 = _rebind(
+        monkeypatch, tmp_path, "30_clip_clean", "40_fit_surface",
+        "45_pin_zones", "50_export", "60_report")
+    assert m45.main() == 0
+    return m30, m40, m50, m60
 
 
 def utm_disk(cx, cy, r=10.0, n=14):
@@ -215,7 +222,9 @@ def tile_header_meta(path):
 
 
 ARTIFACTS = ["heightmap.npz", "heightmap.tif", "mesh.obj", "mesh.glb",
-             "slope_heatmap.png", "contours.png", "meta.json"]
+             "slope_heatmap.png", "contours.png",
+             "pin_zones.npz", "pin_zones.tif", "pin_zones.png", "pin_zones.geojson",
+             "meta.json"]
 
 
 def make_fake_export(out_dir, dirname, hole, **overrides):
@@ -238,7 +247,21 @@ def make_fake_export(out_dir, dirname, hole, **overrides):
         "fit_band_note": "in_band", "slope_mean_pct": 2.2,
         "slope_max_pct": 4.0, "slope_max_sustained_pct": 3.5,
         "sustained_window_m": 1.0, "elevation_range_on_green_m": 0.4,
-        "flags": [], "generated": "2026-07-10T00:00:00+00:00",
+        "flags": [],
+        "pin_zones": {
+            "definition": "test", "edge_setback_m": 3.0, "cup_bench_radius_m": 0.5,
+            "headline_tier": "standard", "legal_area_m2": 120.0,
+            "legal_fraction": 0.38, "scarce_legal_area": False,
+            "tiers": {
+                "traditional": {"slope_max_pct": 3.0, "area_m2": 200.0,
+                                "fraction_of_green": 0.64, "n_zones": 1},
+                "standard": {"slope_max_pct": 2.0, "area_m2": 120.0,
+                             "fraction_of_green": 0.38, "n_zones": 1},
+                "premium": {"slope_max_pct": 1.5, "area_m2": 60.0,
+                            "fraction_of_green": 0.19, "n_zones": 1},
+            },
+        },
+        "generated": "2026-07-10T00:00:00+00:00",
         "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; "
                              "micro-break below noise floor",
     }

@@ -110,13 +110,27 @@ Per green:
 4. Add plane back; evaluate on grid → heightmap. Mask cells outside the buffered polygon (NaN).
 5. Slopes: `np.gradient` on the grid → slope % and aspect. Sanity: on-green mean slope 0.5–4%, flag any green with max sustained slope > 8% or < 0.3% (suspiciously flat = oversmoothed).
 
+### Stage 4.5 — Legal pin zones
+`45_pin_zones.py`: from the Stage 4 slope grid, derive per green a tiered legal
+hole-location map. A cell is legal when it is (1) on the putting surface, (2)
+≥ `EDGE_SETBACK_M` (3 m, ~USGA 4 paces) from the green edge, and (3) has macro
+slope ≤ tier over the whole `CUP_BENCH_RADIUS_M` (0.5 m) ball-rest bench —
+enforced by morphological erosion (`scipy.ndimage.binary_erosion`), so a lone
+flat cell amid fall-away does not qualify. Three nested tiers: premium ≤1.5%,
+standard ≤2% (the headline "legal" set), traditional ≤3%. Writes
+`data/interim/<label>_pins.npz` (uint8 `tier_class` 0/1/2/3, 255 off-green +
+stats). Never halts: a green too steep for any fair pin legitimately yields 0
+legal area and is flagged (`scarce_legal_area`, < 10 m²) — hole_13 and hole_18
+are genuinely 0. Slope here is macro slope, same caveat as the surface.
+
 ### Stage 5 — Exports (per green → `outputs/greens/<label>/`, label = `hole_NN` | `practice_N`)
 - `heightmap.npz`: `z` (2D float32, meters, NaN outside), `x0`, `y0` (UTM of grid origin), `dx` (=dy, 0.25), `local_origin` (green centroid UTM). Grid row-major, north-up.
 - `heightmap.tif`: same grid as GeoTIFF, EPSG:6341, NAVD88 meters.
 - `mesh.obj` + `mesh.glb` (trimesh): vertices in **local coordinates** (centroid-origin, Z-up, meters) so the sim gets small numbers.
 - `slope_heatmap.png`: slope % heatmap with aspect arrows (StrackaLine-style).
 - `contours.png`: 2.5 cm contour intervals over the green polygon.
-- `meta.json`: hole, source work unit + acquisition date, tile names, CRS strings, cell size, grid shape, class-2 density, λ, fit residual RMS, slope stats (mean/max %), elevation range, generated timestamp, and the caveat string: `"vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"`.
+- `pin_zones.png` / `.tif` (categorical uint8, EPSG:6341) / `.npz` (north-up, same grid as heightmap) / `.geojson` (standard+premium polygons, EPSG:4326): the Stage 4.5 legal pin-zone map.
+- `meta.json`: hole, source work unit + acquisition date, tile names, CRS strings, cell size, grid shape, class-2 density, λ, fit residual RMS, slope stats (mean/max %), elevation range, a `pin_zones` block (tier areas/fractions, setback, scarce flag), generated timestamp, and the caveat string: `"vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"`.
 
 ### Stage 6 — QC report
 `reports/qc_report.md`: table of all greens (density, residual RMS, λ, mean/max slope, elevation range, flags), links to per-green PNGs, list of anything halted/flagged, and the data-honesty paragraph above. Also emit `outputs/greens/index.json` enumerating all greens for the sim to consume.
@@ -129,10 +143,11 @@ green stats/flags, and the folium overview map. `.github/workflows/pages.yml`
 <https://jhoblitt.github.io/crooked_tree_greens/> on every push to main.
 
 ## Definition of done
-- 18 greens (+ practice green if polygon exists) each with all six artifacts present.
+- 18 greens (+ practice green if polygon exists) each with all artifacts present (heightmap, mesh, slope/contour/pin-zone plots, pin-zone raster/vector, meta).
 - No green below 0.8 pts/m² class-2 density without an explicit note.
 - All fit residual RMS values in (or documented near) the 3–6 cm band.
 - All slope sanity checks pass or are flagged with explanation.
+- Legal pin-zone map present per green; greens with scarce/zero legal area flagged.
 - `reports/qc_report.md` complete; `greens_overview.html` shows polygons correctly placed on imagery.
 - The Pages gallery serves all greens and redeploys automatically on push.
 

@@ -9,8 +9,9 @@ from conftest import BASE_E, BASE_N, make_greens_geojson, make_tile, make_tiles_
 
 @pytest.mark.slow
 def test_pipeline_end_to_end(sandbox, monkeypatch):
-    m30, m40, m50, m60, m70 = sandbox("30_clip_clean", "40_fit_surface",
-                                      "50_export", "60_report", "70_site")
+    m30, m40, m45, m50, m60, m70 = sandbox(
+        "30_clip_clean", "40_fit_surface", "45_pin_zones",
+        "50_export", "60_report", "70_site")
     monkeypatch.setattr(m40, "FIT_MAX_PTS", 1200)
     monkeypatch.setattr(m60, "EXPECTED_HOLES", {1, 2})
 
@@ -28,6 +29,7 @@ def test_pipeline_end_to_end(sandbox, monkeypatch):
 
     assert m30.main() == 0
     assert m40.main() == 0
+    assert m45.main() == 0
     assert m50.main() == 0
     assert m60.main() == 0
     assert m70.main() == 0
@@ -39,6 +41,11 @@ def test_pipeline_end_to_end(sandbox, monkeypatch):
         meta = json.loads((m60.OUT / g["label"] / "meta.json").read_text())
         assert meta["fit_band_note"] == "in_band"
         assert 0.03 <= meta["fit_rms_m"] <= 0.06
+        # pin zones flow all the way through to the site
+        assert "legal_pin_area_m2" in g
+        assert (m60.OUT / g["label"] / "pin_zones.tif").exists()
+        assert (m70.SITE / "greens" / g["label"] / "pin_zones.png").exists()
+    assert 'data-kind="pins"' in (m70.SITE / "index.html").read_text()
     # hole_01's buffer straddles the tile seam at BASE_E+10: both tiles feed it;
     # hole_02 sits entirely inside tile_b
     meta1 = json.loads((m60.OUT / "hole_01" / "meta.json").read_text())

@@ -16,9 +16,18 @@ uv run scripts/10_green_polygons.py # green polygons (OSM + manual digitization)
 uv run scripts/20_fetch_lidar.py    # 3DEP LAZ tiles via TNM Access API
 uv run scripts/30_clip_clean.py     # clip class-2 ground returns per green
 uv run scripts/40_fit_surface.py    # thin-plate-spline fit, 3-6 cm residual band
-uv run scripts/50_export.py         # heightmaps, meshes, plots, meta.json
+uv run scripts/45_pin_zones.py      # legal pin-zone map (USGA-guided, tiered)
+uv run scripts/50_export.py         # heightmaps, meshes, plots, pin zones, meta.json
 uv run scripts/60_report.py         # reports/qc_report.md + outputs/greens/index.json
+uv run scripts/70_site.py           # site/ GitHub Pages gallery
 ```
+
+Per-green artifacts (`outputs/greens/<label>/`): `heightmap.npz`/`.tif`, `mesh.obj`/`.glb`,
+`slope_heatmap.png`, `contours.png`, and a **legal pin-zone map** —
+`pin_zones.png`/`.tif`/`.npz`/`.geojson` — marking where a hole could be fairly cut
+(on the putting surface, ≥3 m from the edge, macro slope ≤ 1.5/2/3% over a 0.5 m cup
+bench, per USGA guidance). Steep greens with little or no legal pin area are flagged in
+the QC report.
 
 Stages are idempotent; downloads are cached. If OSM lacks green polygons the
 polygon stage writes `reports/digitize_map.html` for hand-tracing the missing

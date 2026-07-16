@@ -68,21 +68,25 @@ def card(g, meta):
     flags = "".join(f'<span class="flag">{html.escape(f)}</span>' for f in g["flags"])
     if meta.get("needs_review"):
         flags += '<span class="flag">polygon needs review</span>'
+    pz = meta["pin_zones"]
+    if pz["scarce_legal_area"]:
+        flags += '<span class="flag">scarce legal pin area</span>'
     return f"""
   <div class="card" id="{label}">
     <a href="greens/{label}/slope_heatmap.png" target="_blank">
       <img src="greens/{label}/slope_heatmap.png"
            data-slope="greens/{label}/slope_heatmap.png"
            data-contours="greens/{label}/contours.png"
+           data-pins="greens/{label}/pin_zones.png"
            alt="{name} slope heatmap" loading="lazy"></a>
     <div class="body">
       <h2>{name}</h2>
       <p class="stats">slope μ {g["slope_mean_pct"]:.1f}% · max&#8239;1&#8239;m {meta["slope_max_sustained_pct"]:.1f}%
         · Δz {g["elevation_range_m"]:.2f} m · fit {g["fit_rms_m"]*100:.1f} cm
-        · {meta["class2_density_on_green_pts_m2"]:.0f} pts/m²</p>
+        · legal pin {pz["legal_area_m2"]:.0f}&#8239;m² ({pz["legal_fraction"]*100:.0f}%)</p>
       {flags}
       <p class="links"><a href="{REPO}/tree/main/outputs/greens/{label}">assets
-        (heightmap npz/tif, mesh obj/glb)</a></p>
+        (heightmap, mesh, pin zones)</a></p>
     </div>
   </div>"""
 
@@ -99,7 +103,7 @@ def main() -> int:
         meta = json.loads((OUT / label / "meta.json").read_text())
         dst = SITE / "greens" / label
         dst.mkdir(parents=True)
-        for png in ("slope_heatmap.png", "contours.png"):
+        for png in ("slope_heatmap.png", "contours.png", "pin_zones.png"):
             shutil.copy2(OUT / label / png, dst / png)
         cards.append(card(g, meta))
 
@@ -127,6 +131,7 @@ def main() -> int:
     <div class="seg">
       <button class="on" data-kind="slope" onclick="show('slope')">slope heatmaps</button>
       <button data-kind="contours" onclick="show('contours')">contours (2.5 cm)</button>
+      <button data-kind="pins" onclick="show('pins')">legal pin zones</button>
     </div>
     <a href="greens_overview.html">course overview map</a>
     <a href="{REPO}/blob/main/reports/qc_report.md">QC report</a>

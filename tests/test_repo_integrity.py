@@ -50,3 +50,26 @@ def test_committed_fits_are_in_band():
     idx = json.loads((OUT / "index.json").read_text())
     for g in idx["greens"]:
         assert 0.03 <= g["fit_rms_m"] <= 0.06, g["label"]
+
+
+def test_committed_pin_zones_present_and_indexed(manifest_labels):
+    idx = json.loads((OUT / "index.json").read_text())
+    for g in idx["greens"]:
+        assert "legal_pin_area_m2" in g and "scarce_legal_area" in g
+        meta = json.loads((OUT / g["label"] / "meta.json").read_text())
+        pz = meta["pin_zones"]
+        # tiers nest and the headline area matches the standard tier
+        assert (pz["tiers"]["premium"]["area_m2"] <= pz["tiers"]["standard"]["area_m2"]
+                <= pz["tiers"]["traditional"]["area_m2"])
+        assert pz["legal_area_m2"] == pz["tiers"]["standard"]["area_m2"]
+        assert g["legal_pin_area_m2"] == pz["legal_area_m2"]
+
+
+def test_steep_greens_have_scarce_or_zero_legal_area():
+    """The known-steep greens must surface as scarce — a regression guard on
+    both the fit and the pin-zone thresholds."""
+    idx = json.loads((OUT / "index.json").read_text())
+    by = {g["label"]: g for g in idx["greens"]}
+    for label in ("hole_13", "hole_18"):
+        assert by[label]["legal_pin_area_m2"] == 0.0
+        assert by[label]["scarce_legal_area"] is True

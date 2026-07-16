@@ -18,9 +18,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
 import trimesh
+from matplotlib.colors import BoundaryNorm, ListedColormap
+from matplotlib.patches import Patch
 from pyproj import Transformer
+from rasterio import features as rio_features
 from rasterio.transform import from_origin
-from shapely.geometry import shape
+from shapely.geometry import mapping, shape
 from shapely.ops import transform as shp_transform
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -33,7 +36,13 @@ CONTOUR_M = 0.025
 INK, INK2 = "#3a3f45", "#8a9099"
 CAVEAT = "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"
 
+# pin-zone tier -> fill colour (light gray -> dark green, ordinal by legality)
+PIN_FILL = {0: "#eceff1", 1: "#c8e6c9", 2: "#66bb6a", 3: "#1b5e20"}
+PIN_OFF = 255
+PIN_VEC_TIERS = [(2, "standard", 2.0), (3, "premium", 1.5)]  # tiers emitted as polygons
+
 TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:6341", always_xy=True).transform
+TO_LL = Transformer.from_crs("EPSG:6341", "EPSG:4326", always_xy=True).transform
 
 plt.rcParams.update({
     "figure.dpi": 150, "font.size": 9, "text.color": INK,
@@ -131,6 +140,55 @@ def contour_plot(path, title, zgrid, in_green, gx, gy, cx, cy, cz, poly):
     plt.close(fig)
 
 
+def pin_zone_map(path, title, cls_native, gx, gy, cx, cy, poly, stats):
+    lx, ly = gx - cx, gy - cy
+    shown = np.where(cls_native == PIN_OFF, np.nan, cls_native).astype(float)
+    cmap = ListedColormap([PIN_FILL[i] for i in range(4)]).with_extremes(bad=(1, 1, 1, 0))
+    norm = BoundaryNorm([-0.5, 0.5, 1.5, 2.5, 3.5], cmap.N)
+    fig, ax = plt.subplots(figsize=(7.2, 6.4))
+    ax.imshow(shown, origin="lower", cmap=cmap, norm=norm, interpolation="nearest",
+              extent=(lx[0] - DX/2, lx[-1] + DX/2, ly[0] - DX/2, ly[-1] + DX/2))
+    for rx, ry in poly_rings_local(poly, cx, cy):
+        ax.plot(rx, ry, color=INK, lw=1.2)
+    tt = stats["tiers"]
+    legend = [Patch(color=PIN_FILL[3],
+                    label=f"premium ≤{tt['premium']['slope_max_pct']:.1f}%  "
+                          f"{tt['premium']['area_m2']:.0f} m²"),
+              Patch(color=PIN_FILL[2],
+                    label=f"standard ≤{tt['standard']['slope_max_pct']:.1f}%  "
+                          f"{tt['standard']['area_m2']:.0f} m²"),
+              Patch(color=PIN_FILL[1],
+                    label=f"traditional ≤{tt['traditional']['slope_max_pct']:.1f}%  "
+                          f"{tt['traditional']['area_m2']:.0f} m²"),
+              Patch(facecolor=PIN_FILL[0], edgecolor=INK2, label="on green, illegal")]
+    ax.legend(handles=legend, loc="upper right", fontsize=7, framealpha=0.9)
+    ax.set_aspect("equal")
+    ax.set_xlabel("east of centroid [m]")
+    ax.set_ylabel("north of centroid [m]")
+    ax.set_title(title, color=INK, fontsize=10)
+    fig.tight_layout()
+    fig.savefig(path)
+    plt.close(fig)
+
+
+def pin_polygons(cls_north_up, transform, label, hole):
+    """Vectorize the standard and premium tiers into EPSG:4326 features."""
+    feats = []
+    for cls, name, thr in PIN_VEC_TIERS:
+        mask = (cls_north_up != PIN_OFF) & (cls_north_up >= cls)
+        if not mask.any():
+            continue
+        for geom, _ in rio_features.shapes(mask.astype(np.uint8), mask=mask, transform=transform):
+            pu = shape(geom)
+            feats.append({
+                "type": "Feature",
+                "properties": {"label": label, "hole": hole, "tier": name,
+                               "slope_max_pct": thr, "area_m2": round(pu.area, 1)},
+                "geometry": mapping(shp_transform(TO_LL, pu)),
+            })
+    return feats
+
+
 def export_green(feat):
     label = feat["properties"]["label"]
     g = np.load(INTERIM / f"{label}_grid.npz", allow_pickle=False)
@@ -188,6 +246,39 @@ def export_green(feat):
     contour_plot(out / "contours.png", f"{label} — contours every 2.5 cm (rel. to centroid)",
                  zgrid, in_green, gx, gy, cx, cy, cz, poly)
 
+    pins = np.load(INTERIM / f"{label}_pins.npz", allow_pickle=False)
+    cls_native = pins["tier_class"]
+    assert cls_native.shape == zgrid.shape, "pin grid must match height grid"
+    pstats = json.loads(str(pins["stats"]))
+    cls_nu = cls_native[::-1]
+    transform = from_origin(gx[0] - DX/2, gy[-1] + DX/2, DX, DX)
+    np.savez_compressed(
+        out / "pin_zones.npz",
+        tier_class=cls_nu, x0=gx[0], y0=gy[-1], dx=DX,
+        local_origin=np.array([cx, cy, cz]),
+        classes="0=on-green illegal; 1=traditional ≤3%; 2=standard ≤2%; "
+                "3=premium ≤1.5%; 255=off-green",
+        layout="row-major north-up, same grid as heightmap.npz",
+    )
+    with rasterio.open(
+        out / "pin_zones.tif", "w", driver="GTiff",
+        height=ny, width=nx, count=1, dtype="uint8",
+        crs="EPSG:6341", transform=transform, nodata=PIN_OFF,
+    ) as dst:
+        dst.write(cls_nu.astype(np.uint8), 1)
+        dst.update_tags(
+            CLASSES="0 illegal;1 traditional<=3%;2 standard<=2%;3 premium<=1.5%",
+            EDGE_SETBACK_M=str(pstats["edge_setback_m"]),
+            CUP_BENCH_RADIUS_M=str(pstats["cup_bench_radius_m"]))
+    (out / "pin_zones.geojson").write_text(json.dumps(
+        {"type": "FeatureCollection",
+         "features": pin_polygons(cls_nu, transform, label, feat["properties"]["hole"])}))
+    std = pstats["tiers"]["standard"]
+    pin_zone_map(out / "pin_zones.png",
+                 f"{label} — legal pin area {std['area_m2']:.0f} m² "
+                 f"({std['fraction_of_green']*100:.0f}% of green)",
+                 cls_native, gx, gy, cx, cy, poly, pstats)
+
     zvals = zgrid[in_green & np.isfinite(zgrid)]
     meta = {
         "hole": feat["properties"]["hole"],
@@ -215,6 +306,18 @@ def export_green(feat):
         "sustained_window_m": fit["sustained_window_m"],
         "elevation_range_on_green_m": round(float(zvals.max() - zvals.min()), 3),
         "flags": fit["flags"],
+        "pin_zones": {
+            "definition": "USGA-guided legal hole location: on the putting surface, "
+                          f"≥{pstats['edge_setback_m']:.0f} m from the edge, macro slope "
+                          f"≤ tier over a {pstats['cup_bench_radius_m']:.1f} m cup bench",
+            "edge_setback_m": pstats["edge_setback_m"],
+            "cup_bench_radius_m": pstats["cup_bench_radius_m"],
+            "headline_tier": "standard",
+            "legal_area_m2": std["area_m2"],
+            "legal_fraction": std["fraction_of_green"],
+            "scarce_legal_area": pstats["scarce_legal_area"],
+            "tiers": pstats["tiers"],
+        },
         "generated": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
         "vertical_fidelity": CAVEAT,
     }
@@ -233,9 +336,11 @@ def main() -> int:
     for f in feats:
         meta = export_green(f)
         done.append(meta)
+        pz = meta["pin_zones"]
         print(f"  {meta['label']:>10}: grid {meta['grid_shape']}, "
               f"λ={meta['lambda']:.3g}, rms {meta['fit_rms_m']*100:.1f} cm, "
-              f"slope μ {meta['slope_mean_pct']}% max* {meta['slope_max_sustained_pct']}%"
+              f"slope μ {meta['slope_mean_pct']}% max* {meta['slope_max_sustained_pct']}%, "
+              f"legal pin {pz['legal_area_m2']:.0f} m² ({pz['legal_fraction']*100:.0f}%)"
               + (f", flags: {'; '.join(meta['flags'])}" if meta["flags"] else ""))
     print(f"\nCHECKPOINT: exported {len(done)} greens to outputs/greens/<label>/")
     return 0
