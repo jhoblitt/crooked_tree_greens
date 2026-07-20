@@ -52,6 +52,27 @@ def test_site_builds_multi_course_gallery(sandbox):
                 assert (m.SITE / slug / "greens" / label / png).exists()
 
 
+def test_green_pages_have_viewer_and_navigation(sandbox):
+    m = sandbox("70_site")
+    seed_course(m, "course_a", "Course A")
+    assert m.main() == 0
+    page = (m.SITE / "course_a" / "greens" / "hole_01" / "index.html").read_text()
+    # view switcher over all three map kinds
+    for kind in ("slope", "contours", "pins"):
+        assert f'data-kind="{kind}"' in page
+    # pan/zoom viewer with zoom + reset controls
+    assert 'id="viewer"' in page and 'id="view"' in page
+    assert "zoomBtn(1.3)" in page and "resetView()" in page
+    # return navigation + prev/next (wraps)
+    assert 'href="../../"' in page
+    assert 'href="../../greens_overview.html"' in page
+    assert 'href="../practice/"' in page  # prev of first wraps to last
+    assert 'href="../hole_02/"' in page
+    # gallery card links to the page, not the raw png
+    gal = (m.SITE / "course_a" / "index.html").read_text()
+    assert 'href="greens/hole_01/"' in gal
+
+
 def test_site_skips_courses_without_outputs(sandbox):
     m = sandbox("70_site")
     seed_course(m, "course_a", "Course A")

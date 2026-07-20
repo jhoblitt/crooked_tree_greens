@@ -54,6 +54,20 @@ footer { color:var(--muted); font-size:13px; padding-bottom:34px; }
                border-radius:10px; padding:16px 18px; }
 .course-card:hover { border-color:var(--accent); }
 .course-card h2 { margin:0 0 4px; font-size:18px; }
+.viewer { position:relative; overflow:hidden; background:#fff; border:1px solid var(--line);
+          border-radius:10px; height:min(78vh, 900px); touch-action:none; cursor:grab; }
+.viewer img { position:absolute; top:0; left:0; width:100%; height:100%;
+              object-fit:contain; transform-origin:0 0; user-select:none;
+              -webkit-user-drag:none; }
+.vbtns { position:absolute; top:10px; right:10px; display:flex; flex-direction:column;
+         gap:6px; z-index:5; }
+.vbtns button { width:34px; height:34px; border-radius:8px; border:1px solid var(--line);
+                background:var(--card); color:var(--ink); font-size:16px; cursor:pointer; }
+.vbtns button:hover { border-color:var(--accent); }
+.nav { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:10px 0; }
+.nav a.btn { border:1px solid var(--line); background:var(--card); border-radius:8px;
+             padding:6px 12px; text-decoration:none; }
+.nav a.btn:hover { border-color:var(--accent); }
 """
 
 JS = """
@@ -79,7 +93,7 @@ def green_card(slug, g, meta):
         flags += '<span class="flag">scarce legal pin area</span>'
     return f"""
   <div class="card" id="{label}">
-    <a href="greens/{label}/slope_heatmap.png" target="_blank">
+    <a href="greens/{label}/">
       <img src="greens/{label}/slope_heatmap.png"
            data-slope="greens/{label}/slope_heatmap.png"
            data-contours="greens/{label}/contours.png"
@@ -95,6 +109,113 @@ def green_card(slug, g, meta):
         (heightmap, mesh, pin zones)</a></p>
     </div>
   </div>"""
+
+
+VIEWER_JS = """
+const viewer = document.getElementById('viewer');
+const img = document.getElementById('view');
+let s = 1, tx = 0, ty = 0, dragging = false, px = 0, py = 0;
+const apply = () => { img.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; };
+function zoomAt(f, cx, cy) {
+  const ns = Math.min(10, Math.max(1, s * f));
+  tx = cx - (cx - tx) * (ns / s);
+  ty = cy - (cy - ty) * (ns / s);
+  s = ns;
+  if (s === 1) { tx = 0; ty = 0; }
+  apply();
+}
+function zoomBtn(f) {
+  const r = viewer.getBoundingClientRect();
+  zoomAt(f, r.width / 2, r.height / 2);
+}
+function resetView() { s = 1; tx = 0; ty = 0; apply(); }
+viewer.addEventListener('wheel', e => {
+  e.preventDefault();
+  const r = viewer.getBoundingClientRect();
+  zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX - r.left, e.clientY - r.top);
+}, { passive: false });
+viewer.addEventListener('pointerdown', e => {
+  dragging = true; px = e.clientX; py = e.clientY;
+  viewer.setPointerCapture(e.pointerId); viewer.style.cursor = 'grabbing';
+});
+viewer.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  tx += e.clientX - px; ty += e.clientY - py; px = e.clientX; py = e.clientY; apply();
+});
+['pointerup', 'pointercancel'].forEach(ev => viewer.addEventListener(ev, () => {
+  dragging = false; viewer.style.cursor = 'grab';
+}));
+function show(kind) {
+  img.src = img.dataset[kind];
+  document.querySelectorAll('.seg button').forEach(b =>
+    b.classList.toggle('on', b.dataset.kind === kind));
+}
+"""
+
+
+def green_page(slug, g, meta, course_title, prev_label, next_label):
+    label = g["label"]
+    name = meta.get("display") or (
+        f"Hole {g['hole']}" if g["hole"] else label.replace("_", " ").title())
+    pz = meta["pin_zones"]
+    flags = "".join(f'<span class="flag">{html.escape(f)}</span>' for f in g["flags"])
+    if meta.get("needs_review"):
+        flags += '<span class="flag">polygon needs review</span>'
+    if pz["scarce_legal_area"]:
+        flags += '<span class="flag">scarce legal pin area</span>'
+    approach = meta.get("approach_deg")
+    approach_txt = f" · approach {approach:.0f}°" if approach is not None else ""
+    header = f"""
+  <h1>{html.escape(course_title)} — {html.escape(name)}</h1>
+  <p class="stats">slope μ {g["slope_mean_pct"]:.1f}% · Δz {g["elevation_range_m"]:.2f} m ·
+    fit {g["fit_rms_m"]*100:.1f} cm · legal pin {pz["legal_area_m2"]:.0f}&#8239;m²
+    ({pz["legal_fraction"]*100:.0f}%){approach_txt}</p>
+  {flags}
+  <div class="nav">
+    <a class="btn" href="../../">↩ {html.escape(course_title)} gallery</a>
+    <a class="btn" href="../../greens_overview.html">course overview map</a>
+    <a class="btn" href="../{prev_label}/">← prev</a>
+    <a class="btn" href="../{next_label}/">next →</a>
+    <div class="seg">
+      <button class="on" data-kind="slope" onclick="show('slope')">slope</button>
+      <button data-kind="contours" onclick="show('contours')">contours</button>
+      <button data-kind="pins" onclick="show('pins')">pin zones</button>
+    </div>
+  </div>"""
+    body = f"""
+  <div class="viewer" id="viewer">
+    <div class="vbtns">
+      <button onclick="zoomBtn(1.3)" title="zoom in">+</button>
+      <button onclick="zoomBtn(1/1.3)" title="zoom out">−</button>
+      <button onclick="resetView()" title="reset">⌂</button>
+    </div>
+    <img id="view" src="slope_heatmap.png"
+         data-slope="slope_heatmap.png" data-contours="contours.png"
+         data-pins="pin_zones.png" alt="{html.escape(name)} surface map">
+  </div>
+  <p class="links"><a href="{REPO}/tree/main/courses/{slug}/outputs/greens/{label}">raw assets
+    (heightmap npz/tif, mesh obj/glb, pin-zone rasters)</a></p>"""
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{html.escape(course_title)} — {html.escape(name)}</title>
+<style>{CSS}</style>
+</head>
+<body>
+<header>
+{header}
+</header>
+<main>
+{body}
+</main>
+<footer>drag to pan, scroll or buttons to zoom · arrows point downhill · code Apache-2.0,
+  map data © OpenStreetMap contributors (ODbL), LiDAR public domain (USGS 3DEP).</footer>
+<script>{VIEWER_JS}</script>
+</body>
+</html>
+"""
 
 
 def page(title_html, header_extra, body, footer_extra=""):
@@ -125,7 +246,9 @@ def build_course(slug, out_dir):
     idx = json.loads((out_dir / "index.json").read_text())
     dst_root = SITE / slug
     cards = []
-    for g in idx["greens"]:
+    course_title = idx["course"].split(",")[0]
+    labels = [g["label"] for g in idx["greens"]]
+    for i, g in enumerate(idx["greens"]):
         label = g["label"]
         meta = json.loads((out_dir / label / "meta.json").read_text())
         dst = dst_root / "greens" / label
@@ -133,6 +256,9 @@ def build_course(slug, out_dir):
         for png in ("slope_heatmap.png", "contours.png", "pin_zones.png"):
             shutil.copy2(out_dir / label / png, dst / png)
         cards.append(green_card(slug, g, meta))
+        (dst / "index.html").write_text(green_page(
+            slug, g, meta, course_title,
+            labels[i - 1], labels[(i + 1) % len(labels)]))
 
     overview = COURSES / slug / "reports" / "greens_overview.html"
     if overview.exists():

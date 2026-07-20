@@ -415,9 +415,17 @@ def uniquify_practice(feats):
 
 
 def overview_map(course_poly, feats, holes, missing):
+    from folium.utilities import JsCode
+
     c = course_poly.centroid
     m = folium.Map(location=[c.y, c.x], zoom_start=16, tiles=None)
     folium.TileLayer("Esri.WorldImagery", name="Esri World Imagery").add_to(m)
+    open_green = JsCode(
+        """(feature, layer) => {
+          layer.on('click', () => {
+            window.location.href = 'greens/' + feature.properties.label + '/';
+          });
+        }""")
     folium.GeoJson(
         mapping(course_poly),
         style_function=lambda _: {"color": "#ffffff", "weight": 2, "fill": False, "dashArray": "5"},
@@ -431,7 +439,9 @@ def overview_map(course_poly, feats, holes, missing):
         folium.GeoJson(
             f,
             style_function=lambda _, color=color: {"color": color, "weight": 2, "fillOpacity": 0.25},
-            tooltip=f"{p['label']} · {p['area_m2']} m² · {p['hole_source']}",
+            tooltip=f"{p.get('display') or p['label']} · {p['area_m2']} m² · "
+                    f"{p['hole_source']} · click to open",
+            on_each_feature=open_green,
         ).add_to(m)
         cc = shape(f["geometry"]).centroid
         folium.Marker(

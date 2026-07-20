@@ -205,6 +205,19 @@ def test_load_manual_absent_is_empty(sandbox):
     assert m.load_manual() == []
 
 
+def test_overview_map_greens_are_clickable(sandbox):
+    m = sandbox("10_green_polygons")
+    g = green(BASE_E, BASE_N, osm_id=1)
+    g["hole"], g["hole_source"] = 7, "hole_line"
+    feats = [m.green_feature(g)]
+    course = shape(utm_disk(BASE_E, BASE_N, 200.0))
+    m.overview_map(course, feats, [], [])
+    html_text = (m.REPORTS / "greens_overview.html").read_text()
+    assert "window.location.href = 'greens/' + feature.properties.label" in html_text
+    assert "hole_07" in html_text
+    assert "click to open" in html_text
+
+
 def test_stage1_parsing_replays_committed_cache(sandbox, monkeypatch):
     """Course + greens + hole-line parsing against the real committed Overpass
     and Nominatim responses in data/polygons/cache — network hard-disabled."""
