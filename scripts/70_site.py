@@ -69,7 +69,8 @@ function show(kind) {
 
 def green_card(slug, g, meta):
     label = g["label"]
-    name = f"Hole {g['hole']}" if g["hole"] else label.replace("_", " ").title()
+    name = meta.get("display") or (
+        f"Hole {g['hole']}" if g["hole"] else label.replace("_", " ").title())
     flags = "".join(f'<span class="flag">{html.escape(f)}</span>' for f in g["flags"])
     if meta.get("needs_review"):
         flags += '<span class="flag">polygon needs review</span>'

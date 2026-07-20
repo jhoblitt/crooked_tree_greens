@@ -91,6 +91,26 @@ def test_committed_pin_zones_present_and_indexed(course):
         assert g["legal_pin_area_m2"] == pz["legal_area_m2"]
 
 
+def test_starr_pass_scorecard_labels_and_approach():
+    """Human-confirmed nine mapping (Gambler/Pioneer/Palmer) drives labels;
+    every hole green carries a display name and an approach direction."""
+    idx = json.loads((out_dir("starr_pass") / "index.json").read_text())
+    labels = sorted(g["label"] for g in idx["greens"])
+    expected = sorted(f"{nine}_{i:02d}" for nine in ("gambler", "pioneer", "palmer")
+                      for i in range(1, 10))
+    assert labels == expected
+    by = {g["label"]: g for g in idx["greens"]}
+    # spot-check the user-confirmed mapping via pipeline hole numbers
+    assert by["palmer_01"]["hole"] == 26
+    assert by["palmer_03"]["hole"] == 1
+    assert by["gambler_08"]["hole"] == 8
+    assert by["pioneer_05"]["hole"] == 14
+    for g in idx["greens"]:
+        meta = json.loads((out_dir("starr_pass") / g["label"] / "meta.json").read_text())
+        assert meta["display"].split(" #")[0].lower() == g["label"].rsplit("_", 1)[0]
+        assert meta["approach_deg"] is not None
+
+
 def test_crooked_tree_is_complete_with_known_steep_greens():
     """Course-specific regression pins for the original course."""
     idx = json.loads((out_dir("crooked_tree") / "index.json").read_text())

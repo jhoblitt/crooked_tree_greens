@@ -15,6 +15,7 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
+import matplotlib.patheffects as pe
 import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
@@ -24,6 +25,7 @@ from matplotlib.patches import Patch
 from pyproj import Transformer
 from rasterio import features as rio_features
 from rasterio.transform import from_origin
+from shapely.geometry import Point as ShpPoint
 from shapely.geometry import mapping, shape
 from shapely.ops import transform as shp_transform
 
@@ -71,6 +73,39 @@ plt.rcParams.update({
 })
 
 
+def annotate_compass(ax, color=INK):
+    """Small north arrow; the grids are always north-up but say so explicitly."""
+    halo = [pe.withStroke(linewidth=3, foreground="white")]
+    ax.annotate("", xy=(0.05, 0.955), xytext=(0.05, 0.885),
+                xycoords="axes fraction", textcoords="axes fraction",
+                arrowprops=dict(arrowstyle="-|>", color=color, lw=1.6,
+                                path_effects=halo))
+    ax.text(0.05, 0.962, "N", transform=ax.transAxes, ha="center", va="bottom",
+            fontsize=9, fontweight="bold", color=color, path_effects=halo)
+
+
+def annotate_approach(ax, approach_deg, poly, cx, cy, color=INK):
+    """Arrow on the fairway side pointing along the direction of play into
+    the green (approach_deg: math convention, degrees CCW from east)."""
+    if approach_deg is None:
+        return
+    th = np.radians(approach_deg)
+    u = np.array([np.cos(th), np.sin(th)])
+    c = np.array([poly.centroid.x, poly.centroid.y])
+    r, step = 0.0, 0.5
+    while r < 200.0 and poly.contains(ShpPoint(*(c - u * r))):
+        r += step
+    tail = c - u * (r + 8.0) - (cx, cy)
+    head = c - u * max(r - 1.5, 0.0) - (cx, cy)
+    halo = [pe.withStroke(linewidth=4.5, foreground="white")]
+    ax.annotate("", xy=head, xytext=tail,
+                arrowprops=dict(arrowstyle="-|>", color=color, lw=2.0,
+                                path_effects=halo, shrinkA=0, shrinkB=0))
+    label_pos = tail - u * 2.0
+    ax.text(*label_pos, "approach", fontsize=7.5, color=color,
+            ha="center", va="center", path_effects=halo)
+
+
 def poly_rings_local(poly, cx, cy):
     rings = [np.asarray(poly.exterior.coords)] + [np.asarray(r.coords) for r in poly.interiors]
     return [(r[:, 0] - cx, r[:, 1] - cy) for r in rings]
@@ -94,7 +129,8 @@ def grid_mesh(zgrid, gx, gy, cx, cy, cz):
     return trimesh.Trimesh(vertices=verts, faces=faces, process=False)
 
 
-def slope_heatmap(path, title, slope, aspect_deg, in_green, gx, gy, cx, cy, poly, buf):
+def slope_heatmap(path, title, slope, aspect_deg, in_green, gx, gy, cx, cy, poly, buf,
+                  approach_deg=None):
     lx, ly = gx - cx, gy - cy
     fig, ax = plt.subplots(figsize=(7.2, 6.4))
     shown = np.where(np.isfinite(slope), slope, np.nan)
@@ -122,6 +158,8 @@ def slope_heatmap(path, title, slope, aspect_deg, in_green, gx, gy, cx, cy, poly
     for rx, ry in poly_rings_local(buf, cx, cy):
         ax.plot(rx, ry, color="white", lw=0.9, ls=(0, (4, 3)), alpha=0.8)
 
+    annotate_compass(ax)
+    annotate_approach(ax, approach_deg, poly, cx, cy)
     ax.set_aspect("equal")
     ax.set_xlabel("east of centroid [m]")
     ax.set_ylabel("north of centroid [m]")
@@ -131,7 +169,8 @@ def slope_heatmap(path, title, slope, aspect_deg, in_green, gx, gy, cx, cy, poly
     plt.close(fig)
 
 
-def contour_plot(path, title, zgrid, in_green, gx, gy, cx, cy, cz, poly):
+def contour_plot(path, title, zgrid, in_green, gx, gy, cx, cy, cz, poly,
+                 approach_deg=None):
     zg = np.where(in_green & np.isfinite(zgrid), zgrid - cz, np.nan)
     if not np.isfinite(zg).any():
         return
@@ -150,6 +189,8 @@ def contour_plot(path, title, zgrid, in_green, gx, gy, cx, cy, cz, poly):
     for rx, ry in poly_rings_local(poly, cx, cy):
         ax.plot(rx, ry, color=INK, lw=1.2)
 
+    annotate_compass(ax)
+    annotate_approach(ax, approach_deg, poly, cx, cy)
     ax.set_aspect("equal")
     ax.set_xlabel("east of centroid [m]")
     ax.set_ylabel("north of centroid [m]")
@@ -159,7 +200,8 @@ def contour_plot(path, title, zgrid, in_green, gx, gy, cx, cy, cz, poly):
     plt.close(fig)
 
 
-def pin_zone_map(path, title, cls_native, gx, gy, cx, cy, poly, stats):
+def pin_zone_map(path, title, cls_native, gx, gy, cx, cy, poly, stats,
+                 approach_deg=None):
     lx, ly = gx - cx, gy - cy
     shown = np.where(cls_native == PIN_OFF, np.nan, cls_native).astype(float)
     cmap = ListedColormap([PIN_FILL[i] for i in range(4)]).with_extremes(bad=(1, 1, 1, 0))
@@ -181,6 +223,8 @@ def pin_zone_map(path, title, cls_native, gx, gy, cx, cy, poly, stats):
                           f"{tt['traditional']['area_m2']:.0f} m²"),
               Patch(facecolor=PIN_FILL[0], edgecolor=INK2, label="on green, illegal")]
     ax.legend(handles=legend, loc="upper right", fontsize=7, framealpha=0.9)
+    annotate_compass(ax)
+    annotate_approach(ax, approach_deg, poly, cx, cy)
     ax.set_aspect("equal")
     ax.set_xlabel("east of centroid [m]")
     ax.set_ylabel("north of centroid [m]")
@@ -210,6 +254,10 @@ def pin_polygons(cls_north_up, transform, label, hole):
 
 def export_green(feat):
     label = feat["properties"]["label"]
+    display = feat["properties"].get("display") or (
+        f"Hole {feat['properties']['hole']}" if feat["properties"]["hole"]
+        else label.replace("_", " ").title())
+    approach_deg = feat["properties"].get("approach_deg")
     g = np.load(INTERIM / f"{label}_grid.npz", allow_pickle=False)
     fit = json.loads(str(g["fit"]))
     prov = fit["provenance"]
@@ -258,12 +306,13 @@ def export_green(feat):
     mesh.export(out / "mesh.obj")
     mesh.export(out / "mesh.glb")
 
-    stitle = (f"{label} — slope, TPS λ={fit['lambda']:.3g}, "
+    stitle = (f"{display} — slope, TPS λ={fit['lambda']:.3g}, "
               f"fit RMS {fit['fit_rms_m']*100:.1f} cm")
     slope_heatmap(out / "slope_heatmap.png", stitle, slope, aspect, in_green,
-                  gx, gy, cx, cy, poly, buf)
-    contour_plot(out / "contours.png", f"{label} — contours every 2.5 cm (rel. to centroid)",
-                 zgrid, in_green, gx, gy, cx, cy, cz, poly)
+                  gx, gy, cx, cy, poly, buf, approach_deg=approach_deg)
+    contour_plot(out / "contours.png",
+                 f"{display} — contours every 2.5 cm (rel. to centroid)",
+                 zgrid, in_green, gx, gy, cx, cy, cz, poly, approach_deg=approach_deg)
 
     pins = np.load(INTERIM / f"{label}_pins.npz", allow_pickle=False)
     cls_native = pins["tier_class"]
@@ -294,14 +343,19 @@ def export_green(feat):
          "features": pin_polygons(cls_nu, transform, label, feat["properties"]["hole"])}))
     std = pstats["tiers"]["standard"]
     pin_zone_map(out / "pin_zones.png",
-                 f"{label} — legal pin area {std['area_m2']:.0f} m² "
+                 f"{display} — legal pin area {std['area_m2']:.0f} m² "
                  f"({std['fraction_of_green']*100:.0f}% of green)",
-                 cls_native, gx, gy, cx, cy, poly, pstats)
+                 cls_native, gx, gy, cx, cy, poly, pstats,
+                 approach_deg=approach_deg)
 
     zvals = zgrid[in_green & np.isfinite(zgrid)]
     meta = {
         "hole": feat["properties"]["hole"],
         "label": label,
+        "display": display,
+        "nine": feat["properties"].get("nine"),
+        "nine_hole": feat["properties"].get("nine_hole"),
+        "approach_deg": approach_deg,
         "needs_review": feat["properties"]["needs_review"],
         "hole_source": feat["properties"]["hole_source"],
         "source_work_units": prov["work_units"],

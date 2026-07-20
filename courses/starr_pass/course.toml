@@ -10,10 +10,18 @@ course_osm_id = 14067367
 [holes]
 count = 27
 # OSM maps three unnamed nines with per-nine refs 1-9; Stage 1 chains each
-# nine spatially and flattens to holes 1-27 (a=1-9, b=10-18, c=19-27, ordered
-# west to east). Which nine is Rattler/Roadrunner/Coyote on the scorecard is
-# UNCONFIRMED — the nine letters are synthetic.
+# nine spatially and flattens to pipeline holes 1-27 (a=1-9, b=10-18, c=19-27,
+# ordered west to east). The scorecard table below maps those pipeline hole
+# numbers to the real nines — HUMAN-CONFIRMED 2026-07-20 against the renamed
+# courses (Gambler/Pioneer/Palmer). Note the real nines interleave the spatial
+# chains: Palmer crosses chains c and a, Gambler crosses c and a.
 nines = 3
+
+[holes.scorecard]
+# nine name = [pipeline hole numbers in play order: entry i is "<Nine> #i+1"]
+Palmer = [26, 27, 1, 2, 3, 4, 5, 6, 7]
+Pioneer = [10, 11, 12, 13, 14, 15, 16, 17, 18]
+Gambler = [19, 20, 21, 22, 23, 24, 25, 8, 9]
 
 [lidar]
 title_must_contain = ["PimaCo", "2021"]
@@ -25,12 +33,10 @@ horizontal_desc = "EPSG:6341 NAD83(2011) / UTM zone 12N (m)"
 vertical_desc = "EPSG:5703 NAVD88 height (m), GEOID18"
 
 [qc]
-notes = """this is a 27-hole facility mapped in OSM as three unnamed nines \
-with per-nine refs 1–9; the pipeline chained each nine spatially and numbered \
-them a=1–9, b=10–18, c=19–27 ordered west to east. The mapping of those \
-letters to the scorecard nines (Rattler/Roadrunner/Coyote) is synthetic and \
-must be confirmed by a human before hole numbers are trusted. Greens carry \
-`nine`/`nine_ref` properties in hole_lines.geojson for that reconciliation. \
+notes = """this is a 27-hole facility (nines: Gambler, Pioneer, Palmer). \
+Green labels use the human-confirmed scorecard mapping in course.toml \
+(confirmed 2026-07-20); the underlying pipeline hole numbers 1–27 come from \
+spatial chaining of OSM's unnamed nines and are recorded per green as `hole`. \
 Every green carries slope flags: this is target desert golf in the Tucson \
 Mountains — visual QC of the heatmaps shows genuinely tiered greens (tier \
 faces legitimately exceed 8% sustained over 1 m) and OSM polygon edges that \

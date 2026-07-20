@@ -1,6 +1,10 @@
 {
  "hole": 0,
  "label": "practice_2",
+ "display": "Practice",
+ "nine": null,
+ "nine_hole": null,
+ "approach_deg": null,
  "needs_review": true,
  "hole_source": "unassigned",
  "source_work_units": [
@@ -69,6 +73,6 @@
    }
   }
  },
- "generated": "2026-07-20T03:44:25+00:00",
+ "generated": "2026-07-20T17:19:03+00:00",
  "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"
 }

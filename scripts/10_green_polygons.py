@@ -47,10 +47,27 @@ def load_course(slug):
     return cfg
 
 
+def build_scorecard(table, expected_holes):
+    """{pipeline hole -> (nine name, within-nine number)} from the
+    human-confirmed [holes.scorecard] table; None when a course has none."""
+    if not table:
+        return None
+    m = {}
+    for nine, seq in table.items():
+        for i, h in enumerate(seq, 1):
+            if h in m:
+                sys.exit(f"HALT: scorecard lists pipeline hole {h} twice")
+            m[h] = (nine, i)
+    if set(m) != set(expected_holes):
+        sys.exit(f"HALT: scorecard covers {sorted(m)} but expected holes are "
+                 f"{sorted(expected_holes)}")
+    return m
+
+
 def set_course(slug):
     global CFG, POLY_DIR, CACHE_DIR, REPORTS
     global COURSE_NAME_RE, SEARCH_BBOX, EXPECTED_HOLES, NOMINATIM_QUERY, COURSE_OSM_ID
-    global TO_UTM, N_NINES, AREA_MIN, AREA_MAX
+    global TO_UTM, N_NINES, AREA_MIN, AREA_MAX, SCORECARD
     CFG = load_course(slug)
     base = ROOT / "courses" / slug
     POLY_DIR = base / "polygons"
@@ -63,6 +80,7 @@ def set_course(slug):
     COURSE_OSM_ID = CFG["osm"].get("course_osm_id")
     N_NINES = CFG["holes"].get("nines", 0)
     AREA_MIN, AREA_MAX = CFG["holes"].get("area_m2", [250.0, 1200.0])
+    SCORECARD = build_scorecard(CFG["holes"].get("scorecard"), EXPECTED_HOLES)
     TO_UTM = Transformer.from_crs("EPSG:4326", f"EPSG:{CFG['crs']['utm_epsg']}",
                                   always_xy=True).transform
 
@@ -320,9 +338,15 @@ def assign_holes(greens, holes):
         g = greens[best[1]]
         if g["hole"] is None:
             g["hole"], g["hole_source"] = h["ref"], "hole_line"
+            g["hole_line"] = h
         elif g["hole"] != h["ref"]:
             print(f"  WARNING: green osm={g['osm_id']} tag says hole {g['hole']} "
                   f"but hole line {h['ref']} terminates on it")
+
+    by_ref = {h["ref"]: h for h in holes}
+    for g in greens:
+        if g["hole"] is not None and "hole_line" not in g and g["hole"] in by_ref:
+            g["hole_line"] = by_ref[g["hole"]]
 
     claimed = {}
     for g in greens:
@@ -336,17 +360,47 @@ def assign_holes(greens, holes):
     return greens
 
 
+APPROACH_LOOKBACK_M = 60.0
+
+
+def approach_azimuth(green_poly_utm, line_utm):
+    """Direction of play into the green, degrees CCW from east (math
+    convention, same as aspect_deg). Taken along the hole line's last
+    APPROACH_LOOKBACK_M into whichever endpoint sits at the green."""
+    p_start, p_end = Point(line_utm.coords[0]), Point(line_utm.coords[-1])
+    if green_poly_utm.distance(p_start) < green_poly_utm.distance(p_end):
+        line_utm = line_utm.reverse()
+    pin = line_utm.length
+    back = line_utm.interpolate(max(0.0, pin - APPROACH_LOOKBACK_M))
+    tip = line_utm.interpolate(pin)
+    import math
+    return math.degrees(math.atan2(tip.y - back.y, tip.x - back.x))
+
+
 def green_feature(g):
     area = utm(g["poly"]).area
-    label = f"hole_{g['hole']:02d}" if g["hole"] else "practice"
+    hole = g["hole"]
+    label, display, nine, nine_hole = (f"hole_{hole:02d}" if hole else "practice",
+                                       f"Hole {hole}" if hole else "Practice",
+                                       None, None)
+    if hole and SCORECARD:
+        nine, nine_hole = SCORECARD[hole]
+        label = f"{nine.lower()}_{nine_hole:02d}"
+        display = f"{nine} #{nine_hole}"
     props = {
-        "hole": g["hole"] or 0,
+        "hole": hole or 0,
         "label": label,
+        "display": display,
+        "nine": nine,
+        "nine_hole": nine_hole,
         "osm_id": g["osm_id"],
         "area_m2": round(area, 1),
         "hole_source": g["hole_source"] or ("manual" if g.get("manual") else "unassigned"),
         "needs_review": bool(g.get("needs_review") or g.get("manual") or g["hole"] is None),
     }
+    if g.get("hole_line") is not None:
+        props["approach_deg"] = round(
+            approach_azimuth(utm(g["poly"]), utm(g["hole_line"]["line"])), 1)
     if not (AREA_MIN <= area <= AREA_MAX):
         props["needs_review"] = True
         props["area_flag"] = f"area {area:.0f} m2 outside [{AREA_MIN:.0f}, {AREA_MAX:.0f}]"
@@ -487,7 +541,8 @@ def main(course=None) -> int:
 
     greens = assign_holes(greens, holes)
     feats = sorted((green_feature(g) for g in greens),
-                   key=lambda f: (f["properties"]["hole"], f["properties"]["osm_id"] or 0))
+                   key=lambda f: (f["properties"]["hole"] == 0, f["properties"]["label"],
+                                  f["properties"]["osm_id"] or 0))
     uniquify_practice(feats)
     (POLY_DIR / "greens.geojson").write_text(json.dumps(
         {"type": "FeatureCollection", "features": feats}, indent=1))
@@ -500,7 +555,7 @@ def main(course=None) -> int:
     for f in feats:
         p = f["properties"]
         flag = " REVIEW" if p["needs_review"] else ""
-        print(f"    {p['label']:>8}  {p['area_m2']:7.1f} m²  src={p['hole_source']}{flag}"
+        print(f"    {p['label']:>12}  {p['area_m2']:7.1f} m²  src={p['hole_source']}{flag}"
               + (f"  [{p.get('area_flag')}]" if p.get("area_flag") else ""))
 
     overview_map(course_poly, feats, holes, missing)

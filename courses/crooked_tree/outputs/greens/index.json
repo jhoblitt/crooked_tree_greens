@@ -12,10 +12,12 @@
   "2021-10-04"
  ],
  "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor",
- "generated": "2026-07-20T03:44:33+00:00",
+ "generated": "2026-07-20T17:19:03+00:00",
  "greens": [
   {
    "label": "hole_01",
+   "display": "Hole 1",
+   "nine": null,
    "hole": 1,
    "dir": "outputs/greens/hole_01",
    "artifacts": {
@@ -51,6 +53,8 @@
   },
   {
    "label": "hole_02",
+   "display": "Hole 2",
+   "nine": null,
    "hole": 2,
    "dir": "outputs/greens/hole_02",
    "artifacts": {
@@ -86,6 +90,8 @@
   },
   {
    "label": "hole_03",
+   "display": "Hole 3",
+   "nine": null,
    "hole": 3,
    "dir": "outputs/greens/hole_03",
    "artifacts": {
@@ -123,6 +129,8 @@
   },
   {
    "label": "hole_04",
+   "display": "Hole 4",
+   "nine": null,
    "hole": 4,
    "dir": "outputs/greens/hole_04",
    "artifacts": {
@@ -158,6 +166,8 @@
   },
   {
    "label": "hole_05",
+   "display": "Hole 5",
+   "nine": null,
    "hole": 5,
    "dir": "outputs/greens/hole_05",
    "artifacts": {
@@ -195,6 +205,8 @@
   },
   {
    "label": "hole_06",
+   "display": "Hole 6",
+   "nine": null,
    "hole": 6,
    "dir": "outputs/greens/hole_06",
    "artifacts": {
@@ -230,6 +242,8 @@
   },
   {
    "label": "hole_07",
+   "display": "Hole 7",
+   "nine": null,
    "hole": 7,
    "dir": "outputs/greens/hole_07",
    "artifacts": {
@@ -267,6 +281,8 @@
   },
   {
    "label": "hole_08",
+   "display": "Hole 8",
+   "nine": null,
    "hole": 8,
    "dir": "outputs/greens/hole_08",
    "artifacts": {
@@ -304,6 +320,8 @@
   },
   {
    "label": "hole_09",
+   "display": "Hole 9",
+   "nine": null,
    "hole": 9,
    "dir": "outputs/greens/hole_09",
    "artifacts": {
@@ -339,6 +357,8 @@
   },
   {
    "label": "hole_10",
+   "display": "Hole 10",
+   "nine": null,
    "hole": 10,
    "dir": "outputs/greens/hole_10",
    "artifacts": {
@@ -374,6 +394,8 @@
   },
   {
    "label": "hole_11",
+   "display": "Hole 11",
+   "nine": null,
    "hole": 11,
    "dir": "outputs/greens/hole_11",
    "artifacts": {
@@ -409,6 +431,8 @@
   },
   {
    "label": "hole_12",
+   "display": "Hole 12",
+   "nine": null,
    "hole": 12,
    "dir": "outputs/greens/hole_12",
    "artifacts": {
@@ -447,6 +471,8 @@
   },
   {
    "label": "hole_13",
+   "display": "Hole 13",
+   "nine": null,
    "hole": 13,
    "dir": "outputs/greens/hole_13",
    "artifacts": {
@@ -485,6 +511,8 @@
   },
   {
    "label": "hole_14",
+   "display": "Hole 14",
+   "nine": null,
    "hole": 14,
    "dir": "outputs/greens/hole_14",
    "artifacts": {
@@ -522,6 +550,8 @@
   },
   {
    "label": "hole_15",
+   "display": "Hole 15",
+   "nine": null,
    "hole": 15,
    "dir": "outputs/greens/hole_15",
    "artifacts": {
@@ -557,6 +587,8 @@
   },
   {
    "label": "hole_16",
+   "display": "Hole 16",
+   "nine": null,
    "hole": 16,
    "dir": "outputs/greens/hole_16",
    "artifacts": {
@@ -592,6 +624,8 @@
   },
   {
    "label": "hole_17",
+   "display": "Hole 17",
+   "nine": null,
    "hole": 17,
    "dir": "outputs/greens/hole_17",
    "artifacts": {
@@ -627,6 +661,8 @@
   },
   {
    "label": "hole_18",
+   "display": "Hole 18",
+   "nine": null,
    "hole": 18,
    "dir": "outputs/greens/hole_18",
    "artifacts": {
@@ -665,6 +701,8 @@
   },
   {
    "label": "practice_1",
+   "display": "Practice",
+   "nine": null,
    "hole": 0,
    "dir": "outputs/greens/practice_1",
    "artifacts": {
@@ -702,6 +740,8 @@
   },
   {
    "label": "practice_2",
+   "display": "Practice",
+   "nine": null,
    "hole": 0,
    "dir": "outputs/greens/practice_2",
    "artifacts": {

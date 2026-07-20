@@ -1,6 +1,10 @@
 {
  "hole": 9,
  "label": "hole_09",
+ "display": "Hole 9",
+ "nine": null,
+ "nine_hole": null,
+ "approach_deg": 76.1,
  "needs_review": false,
  "hole_source": "hole_line",
  "source_work_units": [
@@ -69,6 +73,6 @@
    }
   }
  },
- "generated": "2026-07-20T03:44:29+00:00",
+ "generated": "2026-07-20T17:18:58+00:00",
  "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"
 }

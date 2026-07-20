@@ -72,7 +72,7 @@ def main(course=None) -> int:
             sys.exit(f"HALT: {p} claims label {m['label']!r} but lives in "
                      f"{p.parent.name!r} — stale or hand-moved export")
         metas.append(m)
-    metas.sort(key=lambda m: (m["hole"] == 0, m["hole"], m["label"]))
+    metas.sort(key=lambda m: (m["hole"] == 0, m["label"]))
     if not metas:
         raise SystemExit("no exported greens found — run stages 1-5 first")
 
@@ -125,7 +125,7 @@ def main(course=None) -> int:
     add("|---|---|---|---|---|---|---|---|---|---|---|---|")
     for m in metas:
         pz = m["pin_zones"]
-        add(f"| [{m['label']}](../outputs/greens/{m['label']}/slope_heatmap.png) "
+        add(f"| [{m.get('display') or m['label']}](../outputs/greens/{m['label']}/slope_heatmap.png) "
             f"([contours](../outputs/greens/{m['label']}/contours.png), "
             f"[pins](../outputs/greens/{m['label']}/pin_zones.png)) "
             f"| {m['hole'] or '—'} | {m['green_area_m2']:.0f} "
@@ -207,6 +207,8 @@ def main(course=None) -> int:
         "greens": [
             {
                 "label": m["label"],
+                "display": m.get("display"),
+                "nine": m.get("nine"),
                 "hole": m["hole"],
                 "dir": f"outputs/greens/{m['label']}",
                 "artifacts": {a.split(".")[0] + "_" + a.split(".")[1]

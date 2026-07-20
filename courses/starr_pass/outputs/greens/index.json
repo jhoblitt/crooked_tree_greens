@@ -12,262 +12,278 @@
   "2021-10-03"
  ],
  "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor",
- "generated": "2026-07-20T04:10:32+00:00",
+ "generated": "2026-07-20T17:30:48+00:00",
  "greens": [
   {
-   "label": "hole_01",
-   "hole": 1,
-   "dir": "outputs/greens/hole_01",
+   "label": "gambler_01",
+   "display": "Gambler #1",
+   "nine": "Gambler",
+   "hole": 19,
+   "dir": "outputs/greens/gambler_01",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_01/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_01/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_01/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_01/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_01/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_01/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_01/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_01/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_01/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_01/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_01/meta.json"
+    "heightmap_npz": "outputs/greens/gambler_01/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_01/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_01/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_01/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_01/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_01/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_01/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_01/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_01/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_01/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_01/meta.json"
    },
    "local_origin_utm": [
-    495104.1747335665,
-    3564260.053015979,
-    830.5419921875
+    496417.11323048925,
+    3563463.922159275,
+    807.1846313476562
    ],
    "grid_shape": [
-    198,
-    235
+    231,
+    212
    ],
-   "slope_mean_pct": 5.31,
-   "elevation_range_m": 1.841,
-   "fit_rms_m": 0.0323,
+   "slope_mean_pct": 7.33,
+   "elevation_range_m": 1.763,
+   "fit_rms_m": 0.0454,
    "legal_pin_area_m2": 0.0,
    "legal_pin_fraction": 0.0,
    "scarce_legal_area": true,
    "flags": [
-    "mean_slope_5.31%_outside_0.5-4%",
-    "max_sustained_20.0%_gt_8%"
+    "mean_slope_7.33%_outside_0.5-4%",
+    "max_sustained_27.7%_gt_8%"
    ],
    "needs_review": false
   },
   {
-   "label": "hole_02",
-   "hole": 2,
-   "dir": "outputs/greens/hole_02",
+   "label": "gambler_02",
+   "display": "Gambler #2",
+   "nine": "Gambler",
+   "hole": 20,
+   "dir": "outputs/greens/gambler_02",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_02/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_02/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_02/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_02/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_02/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_02/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_02/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_02/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_02/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_02/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_02/meta.json"
+    "heightmap_npz": "outputs/greens/gambler_02/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_02/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_02/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_02/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_02/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_02/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_02/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_02/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_02/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_02/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_02/meta.json"
    },
    "local_origin_utm": [
-    495424.66469126014,
-    3564195.646962697,
-    818.4593505859375
+    496329.5892394755,
+    3563848.9014186785,
+    797.3928833007812
    ],
    "grid_shape": [
-    165,
-    237
+    223,
+    201
    ],
-   "slope_mean_pct": 2.78,
-   "elevation_range_m": 0.539,
-   "fit_rms_m": 0.0387,
-   "legal_pin_area_m2": 86.4,
-   "legal_pin_fraction": 0.213,
+   "slope_mean_pct": 2.5,
+   "elevation_range_m": 0.661,
+   "fit_rms_m": 0.0328,
+   "legal_pin_area_m2": 66.0,
+   "legal_pin_fraction": 0.1512,
    "scarce_legal_area": false,
    "flags": [
-    "max_sustained_12.1%_gt_8%"
+    "max_sustained_9.5%_gt_8%"
    ],
    "needs_review": false
   },
   {
-   "label": "hole_03",
-   "hole": 3,
-   "dir": "outputs/greens/hole_03",
+   "label": "gambler_03",
+   "display": "Gambler #3",
+   "nine": "Gambler",
+   "hole": 21,
+   "dir": "outputs/greens/gambler_03",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_03/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_03/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_03/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_03/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_03/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_03/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_03/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_03/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_03/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_03/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_03/meta.json"
+    "heightmap_npz": "outputs/greens/gambler_03/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_03/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_03/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_03/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_03/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_03/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_03/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_03/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_03/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_03/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_03/meta.json"
    },
    "local_origin_utm": [
-    495604.46457715903,
-    3564199.1044669477,
-    813.759521484375
+    496461.28812889144,
+    3564266.350579531,
+    789.7450561523438
    ],
    "grid_shape": [
-    195,
-    231
+    231,
+    191
    ],
-   "slope_mean_pct": 2.76,
-   "elevation_range_m": 0.636,
-   "fit_rms_m": 0.0334,
-   "legal_pin_area_m2": 113.5,
-   "legal_pin_fraction": 0.233,
+   "slope_mean_pct": 3.1,
+   "elevation_range_m": 0.694,
+   "fit_rms_m": 0.0309,
+   "legal_pin_area_m2": 112.9,
+   "legal_pin_fraction": 0.2307,
    "scarce_legal_area": false,
    "flags": [
-    "max_sustained_15.1%_gt_8%"
+    "max_sustained_20.3%_gt_8%"
    ],
    "needs_review": false
   },
   {
-   "label": "hole_04",
-   "hole": 4,
-   "dir": "outputs/greens/hole_04",
+   "label": "gambler_04",
+   "display": "Gambler #4",
+   "nine": "Gambler",
+   "hole": 22,
+   "dir": "outputs/greens/gambler_04",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_04/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_04/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_04/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_04/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_04/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_04/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_04/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_04/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_04/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_04/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_04/meta.json"
+    "heightmap_npz": "outputs/greens/gambler_04/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_04/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_04/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_04/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_04/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_04/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_04/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_04/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_04/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_04/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_04/meta.json"
    },
    "local_origin_utm": [
-    495370.2132089921,
-    3563772.197220431,
-    826.5397338867188
+    496560.864976016,
+    3564667.3748035976,
+    783.4575805664062
    ],
    "grid_shape": [
-    200,
-    188
+    205,
+    196
    ],
-   "slope_mean_pct": 3.89,
-   "elevation_range_m": 1.057,
-   "fit_rms_m": 0.0324,
-   "legal_pin_area_m2": 5.0,
-   "legal_pin_fraction": 0.0119,
+   "slope_mean_pct": 3.31,
+   "elevation_range_m": 0.637,
+   "fit_rms_m": 0.0308,
+   "legal_pin_area_m2": 91.7,
+   "legal_pin_fraction": 0.2309,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_15.9%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "gambler_05",
+   "display": "Gambler #5",
+   "nine": "Gambler",
+   "hole": 23,
+   "dir": "outputs/greens/gambler_05",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/gambler_05/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_05/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_05/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_05/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_05/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_05/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_05/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_05/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_05/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_05/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_05/meta.json"
+   },
+   "local_origin_utm": [
+    496090.4794900073,
+    3564503.6336599663,
+    807.636474609375
+   ],
+   "grid_shape": [
+    188,
+    214
+   ],
+   "slope_mean_pct": 4.67,
+   "elevation_range_m": 1.183,
+   "fit_rms_m": 0.035,
+   "legal_pin_area_m2": 2.9,
+   "legal_pin_fraction": 0.006,
    "scarce_legal_area": true,
    "flags": [
-    "max_sustained_12.7%_gt_8%"
+    "mean_slope_4.67%_outside_0.5-4%",
+    "max_sustained_25.0%_gt_8%"
    ],
    "needs_review": false
   },
   {
-   "label": "hole_05",
-   "hole": 5,
-   "dir": "outputs/greens/hole_05",
+   "label": "gambler_06",
+   "display": "Gambler #6",
+   "nine": "Gambler",
+   "hole": 24,
+   "dir": "outputs/greens/gambler_06",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_05/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_05/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_05/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_05/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_05/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_05/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_05/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_05/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_05/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_05/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_05/meta.json"
+    "heightmap_npz": "outputs/greens/gambler_06/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_06/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_06/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_06/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_06/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_06/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_06/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_06/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_06/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_06/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_06/meta.json"
    },
    "local_origin_utm": [
-    495156.5316262829,
-    3563399.6441304246,
-    827.0946044921875
+    495866.69201038097,
+    3564515.7745151306,
+    817.5283813476562
    ],
    "grid_shape": [
-    232,
-    169
+    216,
+    210
    ],
-   "slope_mean_pct": 3.98,
-   "elevation_range_m": 0.839,
-   "fit_rms_m": 0.0336,
-   "legal_pin_area_m2": 32.5,
-   "legal_pin_fraction": 0.076,
-   "scarce_legal_area": false,
+   "slope_mean_pct": 4.5,
+   "elevation_range_m": 1.485,
+   "fit_rms_m": 0.0302,
+   "legal_pin_area_m2": 8.1,
+   "legal_pin_fraction": 0.0177,
+   "scarce_legal_area": true,
    "flags": [
-    "max_sustained_24.3%_gt_8%"
+    "mean_slope_4.50%_outside_0.5-4%",
+    "max_sustained_31.8%_gt_8%"
    ],
    "needs_review": false
   },
   {
-   "label": "hole_06",
-   "hole": 6,
-   "dir": "outputs/greens/hole_06",
+   "label": "gambler_07",
+   "display": "Gambler #7",
+   "nine": "Gambler",
+   "hole": 25,
+   "dir": "outputs/greens/gambler_07",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_06/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_06/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_06/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_06/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_06/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_06/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_06/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_06/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_06/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_06/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_06/meta.json"
+    "heightmap_npz": "outputs/greens/gambler_07/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_07/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_07/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_07/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_07/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_07/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_07/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_07/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_07/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_07/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_07/meta.json"
    },
    "local_origin_utm": [
-    495618.4626558522,
-    3563729.6051499024,
-    811.4111328125
+    495916.5778224307,
+    3564156.0829930822,
+    804.568359375
    ],
    "grid_shape": [
-    191,
-    230
+    218,
+    202
    ],
-   "slope_mean_pct": 1.73,
-   "elevation_range_m": 0.359,
-   "fit_rms_m": 0.0397,
-   "legal_pin_area_m2": 191.8,
-   "legal_pin_fraction": 0.4018,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_10.5%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_07",
-   "hole": 7,
-   "dir": "outputs/greens/hole_07",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_07/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_07/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_07/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_07/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_07/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_07/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_07/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_07/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_07/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_07/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_07/meta.json"
-   },
-   "local_origin_utm": [
-    495904.06289914215,
-    3563912.0274253758,
-    805.0106811523438
-   ],
-   "grid_shape": [
-    209,
-    192
-   ],
-   "slope_mean_pct": 2.61,
-   "elevation_range_m": 0.627,
-   "fit_rms_m": 0.0394,
-   "legal_pin_area_m2": 148.0,
-   "legal_pin_fraction": 0.3017,
+   "slope_mean_pct": 2.3,
+   "elevation_range_m": 0.418,
+   "fit_rms_m": 0.0304,
+   "legal_pin_area_m2": 162.6,
+   "legal_pin_fraction": 0.3609,
    "scarce_legal_area": false,
    "flags": [
     "max_sustained_12.0%_gt_8%"
@@ -275,21 +291,23 @@
    "needs_review": false
   },
   {
-   "label": "hole_08",
+   "label": "gambler_08",
+   "display": "Gambler #8",
+   "nine": "Gambler",
    "hole": 8,
-   "dir": "outputs/greens/hole_08",
+   "dir": "outputs/greens/gambler_08",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_08/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_08/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_08/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_08/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_08/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_08/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_08/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_08/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_08/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_08/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_08/meta.json"
+    "heightmap_npz": "outputs/greens/gambler_08/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_08/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_08/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_08/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_08/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_08/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_08/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_08/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_08/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_08/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_08/meta.json"
    },
    "local_origin_utm": [
     496104.87043622276,
@@ -313,21 +331,23 @@
    "needs_review": false
   },
   {
-   "label": "hole_09",
+   "label": "gambler_09",
+   "display": "Gambler #9",
+   "nine": "Gambler",
    "hole": 9,
-   "dir": "outputs/greens/hole_09",
+   "dir": "outputs/greens/gambler_09",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_09/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_09/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_09/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_09/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_09/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_09/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_09/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_09/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_09/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_09/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_09/meta.json"
+    "heightmap_npz": "outputs/greens/gambler_09/heightmap.npz",
+    "heightmap_tif": "outputs/greens/gambler_09/heightmap.tif",
+    "mesh_obj": "outputs/greens/gambler_09/mesh.obj",
+    "mesh_glb": "outputs/greens/gambler_09/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/gambler_09/slope_heatmap.png",
+    "contours_png": "outputs/greens/gambler_09/contours.png",
+    "pin_zones_npz": "outputs/greens/gambler_09/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/gambler_09/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/gambler_09/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/gambler_09/pin_zones.geojson",
+    "meta_json": "outputs/greens/gambler_09/meta.json"
    },
    "local_origin_utm": [
     496108.3352213214,
@@ -351,658 +371,63 @@
    "needs_review": false
   },
   {
-   "label": "hole_10",
-   "hole": 10,
-   "dir": "outputs/greens/hole_10",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_10/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_10/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_10/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_10/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_10/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_10/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_10/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_10/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_10/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_10/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_10/meta.json"
-   },
-   "local_origin_utm": [
-    496378.0408477501,
-    3563278.6824502675,
-    795.7757568359375
-   ],
-   "grid_shape": [
-    170,
-    225
-   ],
-   "slope_mean_pct": 3.73,
-   "elevation_range_m": 0.729,
-   "fit_rms_m": 0.0396,
-   "legal_pin_area_m2": 41.1,
-   "legal_pin_fraction": 0.0957,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_13.9%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_11",
-   "hole": 11,
-   "dir": "outputs/greens/hole_11",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_11/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_11/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_11/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_11/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_11/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_11/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_11/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_11/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_11/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_11/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_11/meta.json"
-   },
-   "local_origin_utm": [
-    496789.6261306077,
-    3563306.648531976,
-    781.465087890625
-   ],
-   "grid_shape": [
-    209,
-    201
-   ],
-   "slope_mean_pct": 2.41,
-   "elevation_range_m": 0.644,
-   "fit_rms_m": 0.0327,
-   "legal_pin_area_m2": 57.9,
-   "legal_pin_fraction": 0.1577,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_10.7%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_12",
-   "hole": 12,
-   "dir": "outputs/greens/hole_12",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_12/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_12/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_12/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_12/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_12/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_12/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_12/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_12/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_12/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_12/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_12/meta.json"
-   },
-   "local_origin_utm": [
-    496829.9965210068,
-    3562869.9205580126,
-    787.2037963867188
-   ],
-   "grid_shape": [
-    206,
-    201
-   ],
-   "slope_mean_pct": 3.62,
-   "elevation_range_m": 0.828,
-   "fit_rms_m": 0.0345,
-   "legal_pin_area_m2": 9.5,
-   "legal_pin_fraction": 0.0241,
-   "scarce_legal_area": true,
-   "flags": [
-    "max_sustained_16.6%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_13",
-   "hole": 13,
-   "dir": "outputs/greens/hole_13",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_13/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_13/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_13/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_13/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_13/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_13/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_13/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_13/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_13/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_13/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_13/meta.json"
-   },
-   "local_origin_utm": [
-    496505.80671751604,
-    3562771.573460564,
-    798.7592163085938
-   ],
-   "grid_shape": [
-    207,
-    168
-   ],
-   "slope_mean_pct": 5.52,
-   "elevation_range_m": 1.138,
-   "fit_rms_m": 0.0404,
-   "legal_pin_area_m2": 6.4,
-   "legal_pin_fraction": 0.0184,
-   "scarce_legal_area": true,
-   "flags": [
-    "mean_slope_5.52%_outside_0.5-4%",
-    "max_sustained_22.8%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_14",
-   "hole": 14,
-   "dir": "outputs/greens/hole_14",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_14/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_14/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_14/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_14/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_14/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_14/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_14/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_14/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_14/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_14/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_14/meta.json"
-   },
-   "local_origin_utm": [
-    496439.354122608,
-    3562704.0336119737,
-    801.97802734375
-   ],
-   "grid_shape": [
-    172,
-    230
-   ],
-   "slope_mean_pct": 4.13,
-   "elevation_range_m": 1.027,
-   "fit_rms_m": 0.0338,
-   "legal_pin_area_m2": 0.0,
-   "legal_pin_fraction": 0.0,
-   "scarce_legal_area": true,
-   "flags": [
-    "mean_slope_4.13%_outside_0.5-4%",
-    "max_sustained_23.4%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_15",
-   "hole": 15,
-   "dir": "outputs/greens/hole_15",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_15/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_15/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_15/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_15/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_15/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_15/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_15/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_15/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_15/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_15/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_15/meta.json"
-   },
-   "local_origin_utm": [
-    496413.81027655286,
-    3563083.7424109327,
-    803.189208984375
-   ],
-   "grid_shape": [
-    172,
-    203
-   ],
-   "slope_mean_pct": 3.43,
-   "elevation_range_m": 0.718,
-   "fit_rms_m": 0.0338,
-   "legal_pin_area_m2": 65.4,
-   "legal_pin_fraction": 0.1653,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_18.8%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_16",
-   "hole": 16,
-   "dir": "outputs/greens/hole_16",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_16/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_16/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_16/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_16/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_16/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_16/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_16/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_16/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_16/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_16/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_16/meta.json"
-   },
-   "local_origin_utm": [
-    496339.95425543597,
-    3563215.4435144863,
-    802.9414672851562
-   ],
-   "grid_shape": [
-    199,
-    231
-   ],
-   "slope_mean_pct": 5.51,
-   "elevation_range_m": 1.721,
-   "fit_rms_m": 0.0355,
-   "legal_pin_area_m2": 22.5,
-   "legal_pin_fraction": 0.0378,
-   "scarce_legal_area": false,
-   "flags": [
-    "mean_slope_5.51%_outside_0.5-4%",
-    "max_sustained_15.4%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_17",
-   "hole": 17,
-   "dir": "outputs/greens/hole_17",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_17/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_17/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_17/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_17/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_17/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_17/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_17/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_17/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_17/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_17/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_17/meta.json"
-   },
-   "local_origin_utm": [
-    495805.25591254386,
-    3563307.4402300236,
-    822.994140625
-   ],
-   "grid_shape": [
-    204,
-    212
-   ],
-   "slope_mean_pct": 4.25,
-   "elevation_range_m": 0.945,
-   "fit_rms_m": 0.0396,
-   "legal_pin_area_m2": 8.9,
-   "legal_pin_fraction": 0.0173,
-   "scarce_legal_area": true,
-   "flags": [
-    "mean_slope_4.25%_outside_0.5-4%",
-    "max_sustained_12.4%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_18",
-   "hole": 18,
-   "dir": "outputs/greens/hole_18",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_18/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_18/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_18/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_18/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_18/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_18/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_18/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_18/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_18/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_18/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_18/meta.json"
-   },
-   "local_origin_utm": [
-    496008.2278506949,
-    3563550.5017974516,
-    806.86279296875
-   ],
-   "grid_shape": [
-    198,
-    189
-   ],
-   "slope_mean_pct": 3.21,
-   "elevation_range_m": 0.775,
-   "fit_rms_m": 0.0369,
-   "legal_pin_area_m2": 70.2,
-   "legal_pin_fraction": 0.2051,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_9.7%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_19",
-   "hole": 19,
-   "dir": "outputs/greens/hole_19",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_19/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_19/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_19/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_19/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_19/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_19/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_19/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_19/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_19/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_19/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_19/meta.json"
-   },
-   "local_origin_utm": [
-    496417.11323048925,
-    3563463.922159275,
-    807.1820068359375
-   ],
-   "grid_shape": [
-    231,
-    212
-   ],
-   "slope_mean_pct": 7.31,
-   "elevation_range_m": 1.753,
-   "fit_rms_m": 0.0449,
-   "legal_pin_area_m2": 0.0,
-   "legal_pin_fraction": 0.0,
-   "scarce_legal_area": true,
-   "flags": [
-    "mean_slope_7.31%_outside_0.5-4%",
-    "max_sustained_28.1%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_20",
-   "hole": 20,
-   "dir": "outputs/greens/hole_20",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_20/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_20/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_20/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_20/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_20/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_20/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_20/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_20/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_20/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_20/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_20/meta.json"
-   },
-   "local_origin_utm": [
-    496329.5892394755,
-    3563848.9014186785,
-    797.3924560546875
-   ],
-   "grid_shape": [
-    223,
-    201
-   ],
-   "slope_mean_pct": 2.51,
-   "elevation_range_m": 0.654,
-   "fit_rms_m": 0.0327,
-   "legal_pin_area_m2": 68.5,
-   "legal_pin_fraction": 0.1569,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_9.5%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_21",
-   "hole": 21,
-   "dir": "outputs/greens/hole_21",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_21/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_21/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_21/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_21/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_21/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_21/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_21/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_21/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_21/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_21/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_21/meta.json"
-   },
-   "local_origin_utm": [
-    496461.28812889144,
-    3564266.350579531,
-    789.74609375
-   ],
-   "grid_shape": [
-    231,
-    191
-   ],
-   "slope_mean_pct": 2.98,
-   "elevation_range_m": 0.707,
-   "fit_rms_m": 0.0386,
-   "legal_pin_area_m2": 153.1,
-   "legal_pin_fraction": 0.3128,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_19.2%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_22",
-   "hole": 22,
-   "dir": "outputs/greens/hole_22",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_22/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_22/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_22/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_22/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_22/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_22/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_22/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_22/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_22/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_22/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_22/meta.json"
-   },
-   "local_origin_utm": [
-    496560.864976016,
-    3564667.3748035976,
-    783.458251953125
-   ],
-   "grid_shape": [
-    205,
-    196
-   ],
-   "slope_mean_pct": 3.27,
-   "elevation_range_m": 0.632,
-   "fit_rms_m": 0.0308,
-   "legal_pin_area_m2": 93.2,
-   "legal_pin_fraction": 0.2348,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_15.9%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_23",
-   "hole": 23,
-   "dir": "outputs/greens/hole_23",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_23/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_23/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_23/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_23/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_23/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_23/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_23/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_23/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_23/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_23/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_23/meta.json"
-   },
-   "local_origin_utm": [
-    496090.4794900073,
-    3564503.6336599663,
-    807.6353759765625
-   ],
-   "grid_shape": [
-    188,
-    214
-   ],
-   "slope_mean_pct": 4.66,
-   "elevation_range_m": 1.179,
-   "fit_rms_m": 0.0342,
-   "legal_pin_area_m2": 2.0,
-   "legal_pin_fraction": 0.0042,
-   "scarce_legal_area": true,
-   "flags": [
-    "mean_slope_4.66%_outside_0.5-4%",
-    "max_sustained_24.4%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_24",
-   "hole": 24,
-   "dir": "outputs/greens/hole_24",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_24/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_24/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_24/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_24/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_24/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_24/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_24/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_24/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_24/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_24/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_24/meta.json"
-   },
-   "local_origin_utm": [
-    495866.69201038097,
-    3564515.7745151306,
-    817.531982421875
-   ],
-   "grid_shape": [
-    216,
-    210
-   ],
-   "slope_mean_pct": 4.5,
-   "elevation_range_m": 1.481,
-   "fit_rms_m": 0.0305,
-   "legal_pin_area_m2": 11.1,
-   "legal_pin_fraction": 0.0245,
-   "scarce_legal_area": false,
-   "flags": [
-    "mean_slope_4.50%_outside_0.5-4%",
-    "max_sustained_32.2%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_25",
-   "hole": 25,
-   "dir": "outputs/greens/hole_25",
-   "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_25/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_25/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_25/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_25/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_25/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_25/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_25/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_25/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_25/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_25/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_25/meta.json"
-   },
-   "local_origin_utm": [
-    495916.5778224307,
-    3564156.0829930822,
-    804.572021484375
-   ],
-   "grid_shape": [
-    218,
-    202
-   ],
-   "slope_mean_pct": 2.28,
-   "elevation_range_m": 0.428,
-   "fit_rms_m": 0.0335,
-   "legal_pin_area_m2": 175.4,
-   "legal_pin_fraction": 0.3895,
-   "scarce_legal_area": false,
-   "flags": [
-    "max_sustained_12.1%_gt_8%"
-   ],
-   "needs_review": false
-  },
-  {
-   "label": "hole_26",
+   "label": "palmer_01",
+   "display": "Palmer #1",
+   "nine": "Palmer",
    "hole": 26,
-   "dir": "outputs/greens/hole_26",
+   "dir": "outputs/greens/palmer_01",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_26/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_26/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_26/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_26/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_26/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_26/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_26/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_26/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_26/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_26/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_26/meta.json"
+    "heightmap_npz": "outputs/greens/palmer_01/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_01/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_01/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_01/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_01/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_01/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_01/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_01/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_01/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_01/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_01/meta.json"
    },
    "local_origin_utm": [
     495778.01640706626,
     3564267.954571698,
-    811.27587890625
+    811.275634765625
    ],
    "grid_shape": [
     224,
     188
    ],
-   "slope_mean_pct": 5.45,
-   "elevation_range_m": 1.542,
-   "fit_rms_m": 0.0382,
-   "legal_pin_area_m2": 0.0,
-   "legal_pin_fraction": 0.0,
+   "slope_mean_pct": 5.43,
+   "elevation_range_m": 1.541,
+   "fit_rms_m": 0.0387,
+   "legal_pin_area_m2": 0.1,
+   "legal_pin_fraction": 0.0001,
    "scarce_legal_area": true,
    "flags": [
-    "mean_slope_5.45%_outside_0.5-4%",
-    "max_sustained_14.1%_gt_8%"
+    "mean_slope_5.43%_outside_0.5-4%",
+    "max_sustained_14.4%_gt_8%"
    ],
    "needs_review": false
   },
   {
-   "label": "hole_27",
+   "label": "palmer_02",
+   "display": "Palmer #2",
+   "nine": "Palmer",
    "hole": 27,
-   "dir": "outputs/greens/hole_27",
+   "dir": "outputs/greens/palmer_02",
    "artifacts": {
-    "heightmap_npz": "outputs/greens/hole_27/heightmap.npz",
-    "heightmap_tif": "outputs/greens/hole_27/heightmap.tif",
-    "mesh_obj": "outputs/greens/hole_27/mesh.obj",
-    "mesh_glb": "outputs/greens/hole_27/mesh.glb",
-    "slope_heatmap_png": "outputs/greens/hole_27/slope_heatmap.png",
-    "contours_png": "outputs/greens/hole_27/contours.png",
-    "pin_zones_npz": "outputs/greens/hole_27/pin_zones.npz",
-    "pin_zones_tif": "outputs/greens/hole_27/pin_zones.tif",
-    "pin_zones_png": "outputs/greens/hole_27/pin_zones.png",
-    "pin_zones_geojson": "outputs/greens/hole_27/pin_zones.geojson",
-    "meta_json": "outputs/greens/hole_27/meta.json"
+    "heightmap_npz": "outputs/greens/palmer_02/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_02/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_02/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_02/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_02/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_02/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_02/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_02/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_02/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_02/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_02/meta.json"
    },
    "local_origin_utm": [
     495356.3355391187,
@@ -1016,11 +441,641 @@
    "slope_mean_pct": 3.13,
    "elevation_range_m": 0.905,
    "fit_rms_m": 0.0363,
-   "legal_pin_area_m2": 5.2,
-   "legal_pin_fraction": 0.0126,
+   "legal_pin_area_m2": 7.1,
+   "legal_pin_fraction": 0.0171,
    "scarce_legal_area": true,
    "flags": [
-    "max_sustained_11.2%_gt_8%"
+    "max_sustained_11.1%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "palmer_03",
+   "display": "Palmer #3",
+   "nine": "Palmer",
+   "hole": 1,
+   "dir": "outputs/greens/palmer_03",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/palmer_03/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_03/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_03/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_03/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_03/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_03/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_03/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_03/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_03/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_03/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_03/meta.json"
+   },
+   "local_origin_utm": [
+    495104.1747335665,
+    3564260.053015979,
+    830.5419921875
+   ],
+   "grid_shape": [
+    198,
+    235
+   ],
+   "slope_mean_pct": 5.32,
+   "elevation_range_m": 1.855,
+   "fit_rms_m": 0.0315,
+   "legal_pin_area_m2": 0.0,
+   "legal_pin_fraction": 0.0,
+   "scarce_legal_area": true,
+   "flags": [
+    "mean_slope_5.32%_outside_0.5-4%",
+    "max_sustained_19.9%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "palmer_04",
+   "display": "Palmer #4",
+   "nine": "Palmer",
+   "hole": 2,
+   "dir": "outputs/greens/palmer_04",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/palmer_04/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_04/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_04/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_04/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_04/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_04/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_04/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_04/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_04/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_04/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_04/meta.json"
+   },
+   "local_origin_utm": [
+    495424.66469126014,
+    3564195.646962697,
+    818.459228515625
+   ],
+   "grid_shape": [
+    165,
+    237
+   ],
+   "slope_mean_pct": 2.81,
+   "elevation_range_m": 0.537,
+   "fit_rms_m": 0.0308,
+   "legal_pin_area_m2": 76.6,
+   "legal_pin_fraction": 0.1888,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_11.7%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "palmer_05",
+   "display": "Palmer #5",
+   "nine": "Palmer",
+   "hole": 3,
+   "dir": "outputs/greens/palmer_05",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/palmer_05/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_05/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_05/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_05/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_05/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_05/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_05/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_05/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_05/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_05/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_05/meta.json"
+   },
+   "local_origin_utm": [
+    495604.46457715903,
+    3564199.1044669477,
+    813.7622680664062
+   ],
+   "grid_shape": [
+    195,
+    231
+   ],
+   "slope_mean_pct": 2.76,
+   "elevation_range_m": 0.636,
+   "fit_rms_m": 0.0353,
+   "legal_pin_area_m2": 106.1,
+   "legal_pin_fraction": 0.2177,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_15.0%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "palmer_06",
+   "display": "Palmer #6",
+   "nine": "Palmer",
+   "hole": 4,
+   "dir": "outputs/greens/palmer_06",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/palmer_06/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_06/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_06/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_06/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_06/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_06/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_06/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_06/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_06/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_06/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_06/meta.json"
+   },
+   "local_origin_utm": [
+    495370.2132089921,
+    3563772.197220431,
+    826.541015625
+   ],
+   "grid_shape": [
+    200,
+    188
+   ],
+   "slope_mean_pct": 3.88,
+   "elevation_range_m": 1.067,
+   "fit_rms_m": 0.0326,
+   "legal_pin_area_m2": 7.4,
+   "legal_pin_fraction": 0.0175,
+   "scarce_legal_area": true,
+   "flags": [
+    "max_sustained_12.3%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "palmer_07",
+   "display": "Palmer #7",
+   "nine": "Palmer",
+   "hole": 5,
+   "dir": "outputs/greens/palmer_07",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/palmer_07/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_07/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_07/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_07/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_07/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_07/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_07/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_07/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_07/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_07/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_07/meta.json"
+   },
+   "local_origin_utm": [
+    495156.5316262829,
+    3563399.6441304246,
+    827.0997924804688
+   ],
+   "grid_shape": [
+    232,
+    169
+   ],
+   "slope_mean_pct": 4.0,
+   "elevation_range_m": 0.828,
+   "fit_rms_m": 0.0346,
+   "legal_pin_area_m2": 31.6,
+   "legal_pin_fraction": 0.0738,
+   "scarce_legal_area": false,
+   "flags": [
+    "mean_slope_4.00%_outside_0.5-4%",
+    "max_sustained_24.4%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "palmer_08",
+   "display": "Palmer #8",
+   "nine": "Palmer",
+   "hole": 6,
+   "dir": "outputs/greens/palmer_08",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/palmer_08/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_08/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_08/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_08/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_08/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_08/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_08/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_08/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_08/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_08/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_08/meta.json"
+   },
+   "local_origin_utm": [
+    495618.4626558522,
+    3563729.6051499024,
+    811.4142456054688
+   ],
+   "grid_shape": [
+    191,
+    230
+   ],
+   "slope_mean_pct": 1.74,
+   "elevation_range_m": 0.354,
+   "fit_rms_m": 0.0397,
+   "legal_pin_area_m2": 186.8,
+   "legal_pin_fraction": 0.3914,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_10.4%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "palmer_09",
+   "display": "Palmer #9",
+   "nine": "Palmer",
+   "hole": 7,
+   "dir": "outputs/greens/palmer_09",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/palmer_09/heightmap.npz",
+    "heightmap_tif": "outputs/greens/palmer_09/heightmap.tif",
+    "mesh_obj": "outputs/greens/palmer_09/mesh.obj",
+    "mesh_glb": "outputs/greens/palmer_09/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/palmer_09/slope_heatmap.png",
+    "contours_png": "outputs/greens/palmer_09/contours.png",
+    "pin_zones_npz": "outputs/greens/palmer_09/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/palmer_09/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/palmer_09/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/palmer_09/pin_zones.geojson",
+    "meta_json": "outputs/greens/palmer_09/meta.json"
+   },
+   "local_origin_utm": [
+    495904.06289914215,
+    3563912.0274253758,
+    805.0087280273438
+   ],
+   "grid_shape": [
+    209,
+    192
+   ],
+   "slope_mean_pct": 2.61,
+   "elevation_range_m": 0.632,
+   "fit_rms_m": 0.0391,
+   "legal_pin_area_m2": 148.5,
+   "legal_pin_fraction": 0.3027,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_11.9%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_01",
+   "display": "Pioneer #1",
+   "nine": "Pioneer",
+   "hole": 10,
+   "dir": "outputs/greens/pioneer_01",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_01/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_01/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_01/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_01/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_01/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_01/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_01/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_01/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_01/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_01/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_01/meta.json"
+   },
+   "local_origin_utm": [
+    496378.0408477501,
+    3563278.6824502675,
+    795.7747802734375
+   ],
+   "grid_shape": [
+    170,
+    225
+   ],
+   "slope_mean_pct": 3.74,
+   "elevation_range_m": 0.729,
+   "fit_rms_m": 0.0392,
+   "legal_pin_area_m2": 41.2,
+   "legal_pin_fraction": 0.096,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_13.8%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_02",
+   "display": "Pioneer #2",
+   "nine": "Pioneer",
+   "hole": 11,
+   "dir": "outputs/greens/pioneer_02",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_02/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_02/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_02/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_02/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_02/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_02/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_02/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_02/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_02/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_02/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_02/meta.json"
+   },
+   "local_origin_utm": [
+    496789.6261306077,
+    3563306.648531976,
+    781.46240234375
+   ],
+   "grid_shape": [
+    209,
+    201
+   ],
+   "slope_mean_pct": 2.41,
+   "elevation_range_m": 0.633,
+   "fit_rms_m": 0.0313,
+   "legal_pin_area_m2": 56.1,
+   "legal_pin_fraction": 0.1527,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_11.1%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_03",
+   "display": "Pioneer #3",
+   "nine": "Pioneer",
+   "hole": 12,
+   "dir": "outputs/greens/pioneer_03",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_03/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_03/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_03/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_03/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_03/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_03/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_03/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_03/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_03/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_03/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_03/meta.json"
+   },
+   "local_origin_utm": [
+    496829.9965210068,
+    3562869.9205580126,
+    787.1987915039062
+   ],
+   "grid_shape": [
+    206,
+    201
+   ],
+   "slope_mean_pct": 3.61,
+   "elevation_range_m": 0.831,
+   "fit_rms_m": 0.0343,
+   "legal_pin_area_m2": 10.5,
+   "legal_pin_fraction": 0.0267,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_15.2%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_04",
+   "display": "Pioneer #4",
+   "nine": "Pioneer",
+   "hole": 13,
+   "dir": "outputs/greens/pioneer_04",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_04/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_04/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_04/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_04/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_04/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_04/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_04/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_04/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_04/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_04/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_04/meta.json"
+   },
+   "local_origin_utm": [
+    496505.80671751604,
+    3562771.573460564,
+    798.7605590820312
+   ],
+   "grid_shape": [
+    207,
+    168
+   ],
+   "slope_mean_pct": 5.56,
+   "elevation_range_m": 1.147,
+   "fit_rms_m": 0.0406,
+   "legal_pin_area_m2": 5.9,
+   "legal_pin_fraction": 0.0171,
+   "scarce_legal_area": true,
+   "flags": [
+    "mean_slope_5.56%_outside_0.5-4%",
+    "max_sustained_22.6%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_05",
+   "display": "Pioneer #5",
+   "nine": "Pioneer",
+   "hole": 14,
+   "dir": "outputs/greens/pioneer_05",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_05/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_05/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_05/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_05/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_05/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_05/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_05/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_05/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_05/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_05/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_05/meta.json"
+   },
+   "local_origin_utm": [
+    496439.354122608,
+    3562704.0336119737,
+    801.9779663085938
+   ],
+   "grid_shape": [
+    172,
+    230
+   ],
+   "slope_mean_pct": 4.12,
+   "elevation_range_m": 1.036,
+   "fit_rms_m": 0.0333,
+   "legal_pin_area_m2": 1.1,
+   "legal_pin_fraction": 0.0029,
+   "scarce_legal_area": true,
+   "flags": [
+    "mean_slope_4.12%_outside_0.5-4%",
+    "max_sustained_24.2%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_06",
+   "display": "Pioneer #6",
+   "nine": "Pioneer",
+   "hole": 15,
+   "dir": "outputs/greens/pioneer_06",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_06/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_06/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_06/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_06/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_06/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_06/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_06/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_06/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_06/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_06/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_06/meta.json"
+   },
+   "local_origin_utm": [
+    496413.81027655286,
+    3563083.7424109327,
+    803.189697265625
+   ],
+   "grid_shape": [
+    172,
+    203
+   ],
+   "slope_mean_pct": 3.44,
+   "elevation_range_m": 0.714,
+   "fit_rms_m": 0.0345,
+   "legal_pin_area_m2": 61.2,
+   "legal_pin_fraction": 0.1547,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_18.7%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_07",
+   "display": "Pioneer #7",
+   "nine": "Pioneer",
+   "hole": 16,
+   "dir": "outputs/greens/pioneer_07",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_07/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_07/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_07/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_07/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_07/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_07/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_07/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_07/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_07/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_07/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_07/meta.json"
+   },
+   "local_origin_utm": [
+    496339.95425543597,
+    3563215.4435144863,
+    802.9445190429688
+   ],
+   "grid_shape": [
+    199,
+    231
+   ],
+   "slope_mean_pct": 5.48,
+   "elevation_range_m": 1.714,
+   "fit_rms_m": 0.0351,
+   "legal_pin_area_m2": 23.9,
+   "legal_pin_fraction": 0.0401,
+   "scarce_legal_area": false,
+   "flags": [
+    "mean_slope_5.48%_outside_0.5-4%",
+    "max_sustained_15.6%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_08",
+   "display": "Pioneer #8",
+   "nine": "Pioneer",
+   "hole": 17,
+   "dir": "outputs/greens/pioneer_08",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_08/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_08/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_08/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_08/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_08/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_08/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_08/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_08/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_08/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_08/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_08/meta.json"
+   },
+   "local_origin_utm": [
+    495805.25591254386,
+    3563307.4402300236,
+    822.99609375
+   ],
+   "grid_shape": [
+    204,
+    212
+   ],
+   "slope_mean_pct": 4.24,
+   "elevation_range_m": 0.931,
+   "fit_rms_m": 0.0375,
+   "legal_pin_area_m2": 10.9,
+   "legal_pin_fraction": 0.0213,
+   "scarce_legal_area": false,
+   "flags": [
+    "mean_slope_4.24%_outside_0.5-4%",
+    "max_sustained_12.3%_gt_8%"
+   ],
+   "needs_review": false
+  },
+  {
+   "label": "pioneer_09",
+   "display": "Pioneer #9",
+   "nine": "Pioneer",
+   "hole": 18,
+   "dir": "outputs/greens/pioneer_09",
+   "artifacts": {
+    "heightmap_npz": "outputs/greens/pioneer_09/heightmap.npz",
+    "heightmap_tif": "outputs/greens/pioneer_09/heightmap.tif",
+    "mesh_obj": "outputs/greens/pioneer_09/mesh.obj",
+    "mesh_glb": "outputs/greens/pioneer_09/mesh.glb",
+    "slope_heatmap_png": "outputs/greens/pioneer_09/slope_heatmap.png",
+    "contours_png": "outputs/greens/pioneer_09/contours.png",
+    "pin_zones_npz": "outputs/greens/pioneer_09/pin_zones.npz",
+    "pin_zones_tif": "outputs/greens/pioneer_09/pin_zones.tif",
+    "pin_zones_png": "outputs/greens/pioneer_09/pin_zones.png",
+    "pin_zones_geojson": "outputs/greens/pioneer_09/pin_zones.geojson",
+    "meta_json": "outputs/greens/pioneer_09/meta.json"
+   },
+   "local_origin_utm": [
+    496008.2278506949,
+    3563550.5017974516,
+    806.8656616210938
+   ],
+   "grid_shape": [
+    198,
+    189
+   ],
+   "slope_mean_pct": 3.24,
+   "elevation_range_m": 0.773,
+   "fit_rms_m": 0.037,
+   "legal_pin_area_m2": 69.6,
+   "legal_pin_fraction": 0.2033,
+   "scarce_legal_area": false,
+   "flags": [
+    "max_sustained_10.1%_gt_8%"
    ],
    "needs_review": false
   }

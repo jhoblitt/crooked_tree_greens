@@ -121,6 +121,59 @@ def test_flatten_nines_halts_on_wrong_multiplicity():
         mod.flatten_nines(holes, 3)
 
 
+def test_build_scorecard_maps_and_validates():
+    table = {"Palmer": [26, 27, 1, 2, 3, 4, 5, 6, 7],
+             "Pioneer": list(range(10, 19)),
+             "Gambler": [19, 20, 21, 22, 23, 24, 25, 8, 9]}
+    m = mod.build_scorecard(table, list(range(1, 28)))
+    assert m[26] == ("Palmer", 1) and m[27] == ("Palmer", 2) and m[1] == ("Palmer", 3)
+    assert m[10] == ("Pioneer", 1) and m[18] == ("Pioneer", 9)
+    assert m[8] == ("Gambler", 8) and m[9] == ("Gambler", 9)
+    assert mod.build_scorecard(None, [1, 2]) is None
+
+
+def test_build_scorecard_halts_on_duplicate_and_gap():
+    with pytest.raises(SystemExit, match="twice"):
+        mod.build_scorecard({"A": [1, 2], "B": [2, 3]}, [1, 2, 3])
+    with pytest.raises(SystemExit, match="expected holes"):
+        mod.build_scorecard({"A": [1, 2]}, [1, 2, 3])
+
+
+def test_green_feature_uses_scorecard(monkeypatch):
+    monkeypatch.setattr(mod, "SCORECARD", {26: ("Palmer", 1)})
+    g = green(BASE_E, BASE_N)
+    g["hole"], g["hole_source"] = 26, "hole_line"
+    p = mod.green_feature(g)["properties"]
+    assert p["label"] == "palmer_01"
+    assert p["display"] == "Palmer #1"
+    assert p["nine"] == "Palmer" and p["nine_hole"] == 1
+    monkeypatch.setattr(mod, "SCORECARD", None)
+    p2 = mod.green_feature(g)["properties"]
+    assert p2["label"] == "hole_26" and p2["display"] == "Hole 26"
+
+
+def test_approach_azimuth_direction_and_orientation():
+    from shapely.geometry import LineString as LS
+
+    green_poly = shape(utm_disk(BASE_E, BASE_N, 9.0))
+    green_utm = mod.utm(green_poly)
+    # fairway due west of the green: play direction is due east (0 deg)
+    line = LS([(BASE_E - 300, BASE_N), (BASE_E, BASE_N)])
+    assert abs(mod.approach_azimuth(green_utm, line)) < 1.0
+    # same hole digitized pin->tee: still due east
+    assert abs(mod.approach_azimuth(green_utm, LS(list(line.coords)[::-1]))) < 1.0
+    # fairway due south: play direction is due north (+90 deg math convention)
+    line_s = LS([(BASE_E, BASE_N - 300), (BASE_E, BASE_N)])
+    assert abs(mod.approach_azimuth(green_utm, line_s) - 90.0) < 1.0
+
+
+def test_assign_holes_records_assigning_line():
+    g = [green(BASE_E, BASE_N, osm_id=10)]
+    h = [hole_line(7, (BASE_E - 300, BASE_N), (BASE_E + 2, BASE_N + 1))]
+    out = mod.assign_holes(g, h)
+    assert out[0]["hole_line"] is h[0]
+
+
 def test_cached_fetch_hits_cache(sandbox):
     m = sandbox("10_green_polygons")
     calls = []

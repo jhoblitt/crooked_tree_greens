@@ -4,172 +4,16 @@
   {
    "type": "Feature",
    "properties": {
-    "hole": 0,
-    "label": "practice_1",
-    "osm_id": 1085238770,
-    "area_m2": 874.4,
-    "hole_source": "unassigned",
-    "needs_review": true
-   },
-   "geometry": {
-    "type": "Polygon",
-    "coordinates": [
-     [
-      [
-       -111.0521684,
-       32.377032
-      ],
-      [
-       -111.0521422,
-       32.3770815
-      ],
-      [
-       -111.0521058,
-       32.3771089
-      ],
-      [
-       -111.0520451,
-       32.3771208
-      ],
-      [
-       -111.0519835,
-       32.3770944
-      ],
-      [
-       -111.0519299,
-       32.3770491
-      ],
-      [
-       -111.0518945,
-       32.3770022
-      ],
-      [
-       -111.0518581,
-       32.3769177
-      ],
-      [
-       -111.0518379,
-       32.3768553
-      ],
-      [
-       -111.0518389,
-       32.3767905
-      ],
-      [
-       -111.0518713,
-       32.3767521
-      ],
-      [
-       -111.0519279,
-       32.3767367
-      ],
-      [
-       -111.0519926,
-       32.3767427
-      ],
-      [
-       -111.0520714,
-       32.3768306
-      ],
-      [
-       -111.0521108,
-       32.3768869
-      ],
-      [
-       -111.0521523,
-       32.3769672
-      ],
-      [
-       -111.0521684,
-       32.377032
-      ]
-     ]
-    ]
-   }
-  },
-  {
-   "type": "Feature",
-   "properties": {
-    "hole": 0,
-    "label": "practice_2",
-    "osm_id": 1122486501,
-    "area_m2": 330.7,
-    "hole_source": "unassigned",
-    "needs_review": true
-   },
-   "geometry": {
-    "type": "Polygon",
-    "coordinates": [
-     [
-      [
-       -111.0515472,
-       32.3769466
-      ],
-      [
-       -111.0514842,
-       32.3769331
-      ],
-      [
-       -111.0514198,
-       32.3769376
-      ],
-      [
-       -111.0513729,
-       32.3769512
-      ],
-      [
-       -111.0513514,
-       32.3769897
-      ],
-      [
-       -111.0513742,
-       32.3770384
-      ],
-      [
-       -111.0514399,
-       32.3770667
-      ],
-      [
-       -111.0515029,
-       32.3770792
-      ],
-      [
-       -111.0515727,
-       32.3770848
-      ],
-      [
-       -111.0516116,
-       32.3770622
-      ],
-      [
-       -111.0516304,
-       32.3770293
-      ],
-      [
-       -111.0516169,
-       32.3769874
-      ],
-      [
-       -111.0515941,
-       32.3769591
-      ],
-      [
-       -111.0515472,
-       32.3769466
-      ]
-     ]
-    ]
-   }
-  },
-  {
-   "type": "Feature",
-   "properties": {
     "hole": 1,
     "label": "hole_01",
+    "display": "Hole 1",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": 991325759,
     "area_m2": 296.5,
     "hole_source": "hole_line",
-    "needs_review": false
+    "needs_review": false,
+    "approach_deg": -158.9
    },
    "geometry": {
     "type": "Polygon",
@@ -264,10 +108,14 @@
    "properties": {
     "hole": 2,
     "label": "hole_02",
+    "display": "Hole 2",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": 991325767,
     "area_m2": 386.8,
     "hole_source": "hole_line",
-    "needs_review": false
+    "needs_review": false,
+    "approach_deg": 99.9
    },
    "geometry": {
     "type": "Polygon",
@@ -370,10 +218,14 @@
    "properties": {
     "hole": 3,
     "label": "hole_03",
+    "display": "Hole 3",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 383.7,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": -74.4
    },
    "geometry": {
     "type": "Polygon",
@@ -524,10 +376,14 @@
    "properties": {
     "hole": 4,
     "label": "hole_04",
+    "display": "Hole 4",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 330.6,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": -131.8
    },
    "geometry": {
     "type": "Polygon",
@@ -658,10 +514,14 @@
    "properties": {
     "hole": 5,
     "label": "hole_05",
+    "display": "Hole 5",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 320.1,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": 32.4
    },
    "geometry": {
     "type": "Polygon",
@@ -808,10 +668,14 @@
    "properties": {
     "hole": 6,
     "label": "hole_06",
+    "display": "Hole 6",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 452.2,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": -147.7
    },
    "geometry": {
     "type": "Polygon",
@@ -958,10 +822,14 @@
    "properties": {
     "hole": 7,
     "label": "hole_07",
+    "display": "Hole 7",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 575.0,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": 20.5
    },
    "geometry": {
     "type": "Polygon",
@@ -1060,10 +928,14 @@
    "properties": {
     "hole": 8,
     "label": "hole_08",
+    "display": "Hole 8",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 802.3,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": 34.3
    },
    "geometry": {
     "type": "Polygon",
@@ -1178,10 +1050,14 @@
    "properties": {
     "hole": 9,
     "label": "hole_09",
+    "display": "Hole 9",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": 991325746,
     "area_m2": 382.2,
     "hole_source": "hole_line",
-    "needs_review": false
+    "needs_review": false,
+    "approach_deg": 76.1
    },
    "geometry": {
     "type": "Polygon",
@@ -1272,10 +1148,14 @@
    "properties": {
     "hole": 10,
     "label": "hole_10",
+    "display": "Hole 10",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": 1122486511,
     "area_m2": 301.1,
     "hole_source": "hole_line",
-    "needs_review": false
+    "needs_review": false,
+    "approach_deg": 116.5
    },
    "geometry": {
     "type": "Polygon",
@@ -1350,10 +1230,14 @@
    "properties": {
     "hole": 11,
     "label": "hole_11",
+    "display": "Hole 11",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": 1122491211,
     "area_m2": 292.7,
     "hole_source": "hole_line",
-    "needs_review": false
+    "needs_review": false,
+    "approach_deg": 176.6
    },
    "geometry": {
     "type": "Polygon",
@@ -1432,10 +1316,14 @@
    "properties": {
     "hole": 12,
     "label": "hole_12",
+    "display": "Hole 12",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 291.9,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": 2.4
    },
    "geometry": {
     "type": "Polygon",
@@ -1526,10 +1414,14 @@
    "properties": {
     "hole": 13,
     "label": "hole_13",
+    "display": "Hole 13",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 282.9,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": 3.0
    },
    "geometry": {
     "type": "Polygon",
@@ -1640,10 +1532,14 @@
    "properties": {
     "hole": 14,
     "label": "hole_14",
+    "display": "Hole 14",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 398.2,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": -173.9
    },
    "geometry": {
     "type": "Polygon",
@@ -1774,10 +1670,14 @@
    "properties": {
     "hole": 15,
     "label": "hole_15",
+    "display": "Hole 15",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 290.5,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": -99.1
    },
    "geometry": {
     "type": "Polygon",
@@ -1888,10 +1788,14 @@
    "properties": {
     "hole": 16,
     "label": "hole_16",
+    "display": "Hole 16",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 484.0,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": 58.6
    },
    "geometry": {
     "type": "Polygon",
@@ -1986,10 +1890,14 @@
    "properties": {
     "hole": 17,
     "label": "hole_17",
+    "display": "Hole 17",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": null,
     "area_m2": 377.3,
     "hole_source": "hole_line",
-    "needs_review": true
+    "needs_review": true,
+    "approach_deg": 30.2
    },
    "geometry": {
     "type": "Polygon",
@@ -2104,10 +2012,14 @@
    "properties": {
     "hole": 18,
     "label": "hole_18",
+    "display": "Hole 18",
+    "nine": null,
+    "nine_hole": null,
     "osm_id": 1122491200,
     "area_m2": 258.1,
     "hole_source": "hole_line",
-    "needs_review": false
+    "needs_review": false,
+    "approach_deg": -45.8
    },
    "geometry": {
     "type": "Polygon",
@@ -2168,6 +2080,172 @@
       [
        -111.0532548,
        32.3768691
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "hole": 0,
+    "label": "practice_1",
+    "display": "Practice",
+    "nine": null,
+    "nine_hole": null,
+    "osm_id": 1085238770,
+    "area_m2": 874.4,
+    "hole_source": "unassigned",
+    "needs_review": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -111.0521684,
+       32.377032
+      ],
+      [
+       -111.0521422,
+       32.3770815
+      ],
+      [
+       -111.0521058,
+       32.3771089
+      ],
+      [
+       -111.0520451,
+       32.3771208
+      ],
+      [
+       -111.0519835,
+       32.3770944
+      ],
+      [
+       -111.0519299,
+       32.3770491
+      ],
+      [
+       -111.0518945,
+       32.3770022
+      ],
+      [
+       -111.0518581,
+       32.3769177
+      ],
+      [
+       -111.0518379,
+       32.3768553
+      ],
+      [
+       -111.0518389,
+       32.3767905
+      ],
+      [
+       -111.0518713,
+       32.3767521
+      ],
+      [
+       -111.0519279,
+       32.3767367
+      ],
+      [
+       -111.0519926,
+       32.3767427
+      ],
+      [
+       -111.0520714,
+       32.3768306
+      ],
+      [
+       -111.0521108,
+       32.3768869
+      ],
+      [
+       -111.0521523,
+       32.3769672
+      ],
+      [
+       -111.0521684,
+       32.377032
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "hole": 0,
+    "label": "practice_2",
+    "display": "Practice",
+    "nine": null,
+    "nine_hole": null,
+    "osm_id": 1122486501,
+    "area_m2": 330.7,
+    "hole_source": "unassigned",
+    "needs_review": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -111.0515472,
+       32.3769466
+      ],
+      [
+       -111.0514842,
+       32.3769331
+      ],
+      [
+       -111.0514198,
+       32.3769376
+      ],
+      [
+       -111.0513729,
+       32.3769512
+      ],
+      [
+       -111.0513514,
+       32.3769897
+      ],
+      [
+       -111.0513742,
+       32.3770384
+      ],
+      [
+       -111.0514399,
+       32.3770667
+      ],
+      [
+       -111.0515029,
+       32.3770792
+      ],
+      [
+       -111.0515727,
+       32.3770848
+      ],
+      [
+       -111.0516116,
+       32.3770622
+      ],
+      [
+       -111.0516304,
+       32.3770293
+      ],
+      [
+       -111.0516169,
+       32.3769874
+      ],
+      [
+       -111.0515941,
+       32.3769591
+      ],
+      [
+       -111.0515472,
+       32.3769466
       ]
      ]
     ]
