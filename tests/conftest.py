@@ -43,7 +43,7 @@ def load_script(stem):
 
 
 PATH_CONSTANTS = ("ROOT", "POLY_DIR", "CACHE_DIR", "RAW", "INTERIM", "OUT",
-                  "REPORTS", "SITE")
+                  "REPORTS", "SITE", "COURSES")
 
 
 def _rebind(mp, root, *stems):

@@ -13,6 +13,7 @@ pts/m^2; HALT if any green < 0.8 pts/m^2.
 import datetime
 import json
 import sys
+import tomllib
 from pathlib import Path
 
 import laspy
@@ -23,16 +24,31 @@ from shapely.geometry import shape
 from shapely.ops import transform as shp_transform
 
 ROOT = Path(__file__).resolve().parent.parent
-POLY_DIR = ROOT / "data" / "polygons"
-RAW = ROOT / "data" / "raw"
-INTERIM = ROOT / "data" / "interim"
+DEFAULT_COURSE = "crooked_tree"
 
 GREEN_BUFFER_M = 12.0
 MAD_K = 3.5
 DENSITY_FLAG = 1.5
 DENSITY_HALT = 0.8
 
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:6341", always_xy=True).transform
+def load_course(slug):
+    with open(ROOT / "courses" / slug / "course.toml", "rb") as fh:
+        cfg = tomllib.load(fh)
+    cfg["slug"] = slug
+    return cfg
+
+
+def set_course(slug):
+    global CFG, POLY_DIR, RAW, INTERIM, TO_UTM
+    CFG = load_course(slug)
+    POLY_DIR = ROOT / "courses" / slug / "polygons"
+    RAW = ROOT / "data" / "raw" / slug
+    INTERIM = ROOT / "data" / "interim" / slug
+    TO_UTM = Transformer.from_crs("EPSG:4326", f"EPSG:{CFG['crs']['utm_epsg']}",
+                                  always_xy=True).transform
+
+
+set_course(DEFAULT_COURSE)
 
 
 def gps_to_date(t_adjusted: float) -> str:
@@ -76,7 +92,9 @@ def manifest_tiles(tiles_meta):
     return [RAW / n for n in sorted(names)]
 
 
-def main() -> int:
+def main(course=None) -> int:
+    if course:
+        set_course(course)
     tiles_meta = json.loads((RAW / "tiles_meta.json").read_text())
     assert all(u.lower().replace("metre", "meter") == "meter"
                for t in tiles_meta["tiles"] for _, u in t["axis_units"]), \
@@ -185,4 +203,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--course", default=DEFAULT_COURSE)
+    raise SystemExit(main(parser.parse_args().course))

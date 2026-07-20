@@ -9,6 +9,7 @@ contours.png (2.5 cm), meta.json -> outputs/greens/<label>/.
 import datetime
 import json
 import shutil
+import tomllib
 from pathlib import Path
 
 import matplotlib
@@ -27,9 +28,7 @@ from shapely.geometry import mapping, shape
 from shapely.ops import transform as shp_transform
 
 ROOT = Path(__file__).resolve().parent.parent
-POLY_DIR = ROOT / "data" / "polygons"
-INTERIM = ROOT / "data" / "interim"
-OUT = ROOT / "outputs" / "greens"
+DEFAULT_COURSE = "crooked_tree"
 
 DX = 0.25
 CONTOUR_M = 0.025
@@ -41,8 +40,28 @@ PIN_FILL = {0: "#eceff1", 1: "#c8e6c9", 2: "#66bb6a", 3: "#1b5e20"}
 PIN_OFF = 255
 PIN_VEC_TIERS = [(2, "standard", 2.0), (3, "premium", 1.5)]  # tiers emitted as polygons
 
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:6341", always_xy=True).transform
-TO_LL = Transformer.from_crs("EPSG:6341", "EPSG:4326", always_xy=True).transform
+def load_course(slug):
+    with open(ROOT / "courses" / slug / "course.toml", "rb") as fh:
+        cfg = tomllib.load(fh)
+    cfg["slug"] = slug
+    return cfg
+
+
+def set_course(slug):
+    global CFG, POLY_DIR, INTERIM, OUT, TO_UTM, TO_LL, UTM_EPSG, CRS_H_DESC, CRS_V_DESC
+    CFG = load_course(slug)
+    base = ROOT / "courses" / slug
+    POLY_DIR = base / "polygons"
+    INTERIM = ROOT / "data" / "interim" / slug
+    OUT = base / "outputs" / "greens"
+    UTM_EPSG = CFG["crs"]["utm_epsg"]
+    CRS_H_DESC = CFG["crs"]["horizontal_desc"]
+    CRS_V_DESC = CFG["crs"]["vertical_desc"]
+    TO_UTM = Transformer.from_crs("EPSG:4326", f"EPSG:{UTM_EPSG}", always_xy=True).transform
+    TO_LL = Transformer.from_crs(f"EPSG:{UTM_EPSG}", "EPSG:4326", always_xy=True).transform
+
+
+set_course(DEFAULT_COURSE)
 
 plt.rcParams.update({
     "figure.dpi": 150, "font.size": 9, "text.color": INK,
@@ -220,14 +239,14 @@ def export_green(feat):
         out / "heightmap.npz",
         z=z_north_up, x0=gx[0], y0=gy[-1], dx=DX,
         local_origin=np.array([cx, cy, cz]),
-        crs="EPSG:6341 (NAD83(2011)/UTM 12N) + NAVD88 m (EPSG:5703)",
+        crs=f"{CRS_H_DESC} + {CRS_V_DESC}",
         layout="row-major north-up: z[0,0] node at (x0, y0), row step -dx north->south",
     )
 
     with rasterio.open(
         out / "heightmap.tif", "w", driver="GTiff",
         height=ny, width=nx, count=1, dtype="float32",
-        crs="EPSG:6341", transform=from_origin(gx[0] - DX/2, gy[-1] + DX/2, DX, DX),
+        crs=f"EPSG:{UTM_EPSG}", transform=from_origin(gx[0] - DX/2, gy[-1] + DX/2, DX, DX),
         nodata=np.nan,
     ) as dst:
         dst.write(z_north_up, 1)
@@ -263,7 +282,7 @@ def export_green(feat):
     with rasterio.open(
         out / "pin_zones.tif", "w", driver="GTiff",
         height=ny, width=nx, count=1, dtype="uint8",
-        crs="EPSG:6341", transform=transform, nodata=PIN_OFF,
+        crs=f"EPSG:{UTM_EPSG}", transform=transform, nodata=PIN_OFF,
     ) as dst:
         dst.write(cls_nu.astype(np.uint8), 1)
         dst.update_tags(
@@ -288,8 +307,8 @@ def export_green(feat):
         "source_work_units": prov["work_units"],
         "acquisition_dates": prov["acquisition_dates"],
         "tiles": prov["tiles"],
-        "crs_horizontal": "EPSG:6341 NAD83(2011) / UTM zone 12N (m)",
-        "crs_vertical": "EPSG:5703 NAVD88 height (m), GEOID18",
+        "crs_horizontal": CRS_H_DESC,
+        "crs_vertical": CRS_V_DESC,
         "cell_size_m": DX,
         "grid_shape": [int(ny), int(nx)],
         "grid_origin_north_up": [float(gx[0]), float(gy[-1])],
@@ -330,7 +349,9 @@ def export_green(feat):
     return meta
 
 
-def main() -> int:
+def main(course=None) -> int:
+    if course:
+        set_course(course)
     feats = json.loads((POLY_DIR / "greens.geojson").read_text())["features"]
     done = []
     for f in feats:
@@ -347,4 +368,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--course", default=DEFAULT_COURSE)
+    raise SystemExit(main(parser.parse_args().course))

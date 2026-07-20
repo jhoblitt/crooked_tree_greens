@@ -4,14 +4,32 @@
 import datetime
 import json
 import sys
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-POLY_DIR = ROOT / "data" / "polygons"
-OUT = ROOT / "outputs" / "greens"
-REPORTS = ROOT / "reports"
+DEFAULT_COURSE = "crooked_tree"
 
-EXPECTED_HOLES = set(range(1, 19))
+
+def load_course(slug):
+    with open(ROOT / "courses" / slug / "course.toml", "rb") as fh:
+        cfg = tomllib.load(fh)
+    cfg["slug"] = slug
+    return cfg
+
+
+def set_course(slug):
+    global CFG, POLY_DIR, OUT, REPORTS, EXPECTED_HOLES
+    CFG = load_course(slug)
+    base = ROOT / "courses" / slug
+    POLY_DIR = base / "polygons"
+    OUT = base / "outputs" / "greens"
+    REPORTS = base / "reports"
+    EXPECTED_HOLES = set(CFG["holes"].get("refs")
+                         or range(1, CFG["holes"]["count"] + 1))
+
+
+set_course(DEFAULT_COURSE)
 ARTIFACTS = ["heightmap.npz", "heightmap.tif", "mesh.obj", "mesh.glb",
              "slope_heatmap.png", "contours.png",
              "pin_zones.npz", "pin_zones.tif", "pin_zones.png", "pin_zones.geojson",
@@ -35,13 +53,15 @@ def reconcile_outputs():
                  f"rerun scripts/50_export.py")
     orphans = sorted(dirs - manifest)
     if orphans:
-        sys.exit(f"HALT: outputs/greens dirs not in data/polygons/greens.geojson: "
+        sys.exit(f"HALT: outputs/greens dirs not in the polygon manifest: "
                  f"{orphans} — stale from a renamed/removed green; delete them or "
                  f"rerun stages 1-5")
     return sorted(manifest - dirs)
 
 
-def main() -> int:
+def main(course=None) -> int:
+    if course:
+        set_course(course)
     unexported = reconcile_outputs()
     if unexported:
         print(f"note: manifest greens with no exports yet: {unexported}")
@@ -72,17 +92,17 @@ def main() -> int:
 
     lines = []
     add = lines.append
-    add("# Crooked Tree Greens — QC report")
+    add(f"# {CFG['name']} — QC report")
     add("")
     add(f"Generated {datetime.datetime.now(datetime.UTC).isoformat(timespec='seconds')}"
         f" · status: **{'PARTIAL' if partial else 'COMPLETE'}**"
-        f" ({len(have_holes)}/18 hole greens + {n_practice} practice)")
+        f" ({len(have_holes)}/{len(EXPECTED_HOLES)} hole greens + {n_practice} practice)")
     add("")
-    add("- Course: Crooked Tree Golf Course, Arthur Pack Regional Park, Tucson AZ "
-        "(OSM way 263321891; Nominatim cross-check passed)")
+    add(f"- Course: {CFG['name']}, {CFG['location']} "
+        f"(OSM {CFG['osm'].get('course_osm_id', '?')}; Nominatim cross-checked)")
     add(f"- LiDAR source: {', '.join(wu)} (USGS 3DEP, public domain), "
         f"acquisition {', '.join(dates)}, tiles: {', '.join(tiles)}")
-    add("- CRS: horizontal EPSG:6341 NAD83(2011)/UTM 12N (m); vertical EPSG:5703 NAVD88 (m), GEOID18")
+    add(f"- CRS: horizontal {CFG['crs']['horizontal_desc']}; vertical {CFG['crs']['vertical_desc']}")
     add("- Method: class-2 returns, 12 m collar buffer, 3.5×MAD plane-residual outlier "
         "rejection, thin-plate-spline RBF on plane residuals, λ swept to land fit RMS in "
         "3–6 cm, 0.25 m grid")
@@ -90,11 +110,13 @@ def main() -> int:
     if partial:
         add(f"## ⚠ Missing greens: holes {', '.join(map(str, missing_holes))}")
         add("")
-        add("OSM has only partial `golf=green` coverage for this course. To finish: open "
-            "`reports/digitize_map.html`, trace each green at the red flag markers, click "
-            "**Export**, save as `data/polygons/greens_manual.geojson`, then rerun "
-            "`uv run scripts/10_green_polygons.py` and stages 2–6 (all idempotent; "
-            "LAZ tiles already cover the whole course).")
+        slug = CFG["slug"]
+        add(f"OSM has only partial `golf=green` coverage for this course. To finish: open "
+            f"`courses/{slug}/reports/digitize_map.html`, trace each green at the red flag "
+            f"markers, click **Export**, save as "
+            f"`courses/{slug}/polygons/greens_manual.geojson`, then rerun "
+            f"`uv run scripts/10_green_polygons.py --course {slug}` and stages 2–6 "
+            f"(all idempotent).")
         add("")
     add("## Greens")
     add("")
@@ -131,8 +153,8 @@ def main() -> int:
         parts = ", ".join(f"{m['label']} ({m['pin_zones']['legal_area_m2']:.0f} m²)"
                           for m in scarce)
         add(f"**Scarce legal area** (< 10 m² at standard tier): {parts}. These are the "
-            "steepest greens — hole_13 and hole_18 have no ≤3% spot anywhere, consistent "
-            "with their slope flags; verify the polygons before trusting a zero.")
+            "steepest greens; a zero means no ≤3% bench exists anywhere on the surface — "
+            "verify the polygon before trusting it.")
     else:
         add("Every green has ample legal pin area.")
     add("")
@@ -149,17 +171,12 @@ def main() -> int:
             why.append(f"polygon needs human review (hole_source={m['hole_source']})")
         add(f"- **{m['label']}**: {' · '.join(why)}")
     add("")
-    add("Notes on the flags: this course is built on a north-sloping bajada, so "
-        "sustained-slope flags are mostly real terrain, and all flagged fits are still "
-        "in the 3–6 cm residual band. Specifics from visual QC of the slope heatmaps: "
-        "hole_03's 17% band is a steep bank clipped by the polygon's west edge (trim "
-        "~1–2 m or accept as collar); hole_13 genuinely tilts 4–6% north with its NW "
-        "corner touching a bank; hole_18 sits on a uniform hillside (heaviest smoothing "
-        "still fits at 3.6 cm); practice_1's 874 m² OSM polygon appears overdrawn and "
-        "contains a mound band. Manually digitized polygons (holes 3–8, 12–17) and both "
-        "practice greens carry needs_review by construction — check edges against each "
-        "slope heatmap. Hole numbers were assigned from golf=hole line pin endpoints, "
-        "which may not match the scorecard — confirm numbering before use.")
+    qc_notes = CFG.get("qc", {}).get("notes")
+    if qc_notes:
+        add("Notes on the flags: " + qc_notes)
+    else:
+        add("Hole numbers were assigned from golf=hole line pin endpoints, which may "
+            "not match the scorecard — confirm numbering before use.")
     add("")
     add("## Data honesty")
     add("")
@@ -177,11 +194,11 @@ def main() -> int:
     (REPORTS / "qc_report.md").write_text("\n".join(lines))
 
     index = {
-        "course": "Crooked Tree Golf Course, Arthur Pack Regional Park, Tucson AZ",
+        "course": f"{CFG['name']}, {CFG['location']}",
         "status": "partial" if partial else "complete",
         "missing_holes": missing_holes,
-        "crs_horizontal": "EPSG:6341",
-        "crs_vertical": "EPSG:5703 (NAVD88 m, GEOID18)",
+        "crs_horizontal": f"EPSG:{CFG['crs']['utm_epsg']}",
+        "crs_vertical": CFG["crs"]["vertical_desc"],
         "cell_size_m": 0.25,
         "source_work_units": wu,
         "acquisition_dates": dates,
@@ -220,4 +237,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--course", default=DEFAULT_COURSE)
+    raise SystemExit(main(parser.parse_args().course))

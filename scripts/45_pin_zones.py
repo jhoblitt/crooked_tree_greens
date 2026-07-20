@@ -23,14 +23,31 @@ hold a fair pin legitimately yields zero legal area and is flagged, not failed.
 
 import json
 import sys
+import tomllib
 from pathlib import Path
 
 import numpy as np
 from scipy.ndimage import binary_erosion, label
 
 ROOT = Path(__file__).resolve().parent.parent
-POLY_DIR = ROOT / "data" / "polygons"
-INTERIM = ROOT / "data" / "interim"
+DEFAULT_COURSE = "crooked_tree"
+
+
+def load_course(slug):
+    with open(ROOT / "courses" / slug / "course.toml", "rb") as fh:
+        cfg = tomllib.load(fh)
+    cfg["slug"] = slug
+    return cfg
+
+
+def set_course(slug):
+    global CFG, POLY_DIR, INTERIM
+    CFG = load_course(slug)
+    POLY_DIR = ROOT / "courses" / slug / "polygons"
+    INTERIM = ROOT / "data" / "interim" / slug
+
+
+set_course(DEFAULT_COURSE)
 
 # class int -> (name, max on-bench slope %). Nested: premium ⊂ standard ⊂ traditional.
 TIERS = [
@@ -87,7 +104,9 @@ def tier_stats(cls_map, dx, tiers=TIERS):
     return out
 
 
-def main() -> int:
+def main(course=None) -> int:
+    if course:
+        set_course(course)
     feats = json.loads((POLY_DIR / "greens.geojson").read_text())["features"]
     print(f"pin-zone params: setback {EDGE_SETBACK_M} m, cup bench r={CUP_BENCH_RADIUS_M} m, "
           f"tiers " + ", ".join(f"{t['name']}<={t['slope_pct']}%" for t in TIERS))
@@ -124,4 +143,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--course", default=DEFAULT_COURSE)
+    sys.exit(main(parser.parse_args().course))

@@ -44,8 +44,9 @@ def test_pipeline_end_to_end(sandbox, monkeypatch):
         # pin zones flow all the way through to the site
         assert "legal_pin_area_m2" in g
         assert (m60.OUT / g["label"] / "pin_zones.tif").exists()
-        assert (m70.SITE / "greens" / g["label"] / "pin_zones.png").exists()
-    assert 'data-kind="pins"' in (m70.SITE / "index.html").read_text()
+        assert (m70.SITE / "crooked_tree" / "greens" / g["label"] / "pin_zones.png").exists()
+    assert 'data-kind="pins"' in (m70.SITE / "crooked_tree" / "index.html").read_text()
+    assert "crooked_tree/" in (m70.SITE / "index.html").read_text()  # course picker
     # hole_01's buffer straddles the tile seam at BASE_E+10: both tiles feed it;
     # hole_02 sits entirely inside tile_b
     meta1 = json.loads((m60.OUT / "hole_01" / "meta.json").read_text())

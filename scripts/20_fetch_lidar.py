@@ -11,6 +11,7 @@ data/raw/tiles_meta.json.
 
 import json
 import sys
+import tomllib
 from pathlib import Path
 
 import laspy
@@ -21,18 +22,36 @@ from shapely.ops import transform as shp_transform
 from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
-POLY_DIR = ROOT / "data" / "polygons"
-RAW = ROOT / "data" / "raw"
+DEFAULT_COURSE = "crooked_tree"
 
 GREEN_BUFFER_M = 12.0
 MISSING_PIN_BUFFER_M = 40.0
 TNM_URL = "https://tnmaccess.nationalmap.gov/api/v1/products"
-HDRS = {"User-Agent": "crooked-tree-greens/0.1 (josh@hoblitt.com)"}
+HDRS = {"User-Agent": "green-maps/0.1 (josh@hoblitt.com)"}
 
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:6341", always_xy=True)
-utm = lambda g: shp_transform(TO_UTM.transform, g)  # noqa: E731
-unutm = lambda g: shp_transform(  # noqa: E731
-    Transformer.from_crs("EPSG:6341", "EPSG:4326", always_xy=True).transform, g)
+
+def load_course(slug):
+    with open(ROOT / "courses" / slug / "course.toml", "rb") as fh:
+        cfg = tomllib.load(fh)
+    cfg["slug"] = slug
+    return cfg
+
+
+def set_course(slug):
+    global CFG, POLY_DIR, RAW, TITLE_MUST, ACCEPT_EPSG, TO_UTM, utm, unutm
+    CFG = load_course(slug)
+    POLY_DIR = ROOT / "courses" / slug / "polygons"
+    RAW = ROOT / "data" / "raw" / slug
+    TITLE_MUST = CFG["lidar"]["title_must_contain"]
+    ACCEPT_EPSG = set(CFG["crs"]["accept_horizontal_epsg"])
+    epsg = CFG["crs"]["utm_epsg"]
+    TO_UTM = Transformer.from_crs("EPSG:4326", f"EPSG:{epsg}", always_xy=True)
+    from_utm = Transformer.from_crs(f"EPSG:{epsg}", "EPSG:4326", always_xy=True)
+    utm = lambda g: shp_transform(TO_UTM.transform, g)  # noqa: E731
+    unutm = lambda g: shp_transform(from_utm.transform, g)  # noqa: E731
+
+
+set_course(DEFAULT_COURSE)
 
 
 def acquisition_footprint():
@@ -136,8 +155,8 @@ def verify_tiles(meta):
     print(f"horizontal CRS set: {horiz}, unit set: {units}")
     if len(horiz) != 1 or None in horiz:
         sys.exit("HALT: tiles disagree on horizontal CRS or CRS missing")
-    if horiz - {6341, 26912}:
-        sys.exit(f"HALT: unexpected horizontal CRS {horiz} — expected UTM 12N (6341/26912)")
+    if horiz - ACCEPT_EPSG:
+        sys.exit(f"HALT: unexpected horizontal CRS {horiz} — expected {sorted(ACCEPT_EPSG)}")
     if units != {("meter", "meter", "meter")}:
         sys.exit(f"HALT: units are not uniformly meters: {units} — add ingest conversion")
 
@@ -156,7 +175,9 @@ def verify_tiles(meta):
     print("coverage: every buffered green fully inside downloaded tiles")
 
 
-def main() -> int:
+def main(course=None) -> int:
+    if course:
+        set_course(course)
     fp = acquisition_footprint()
     bbox = fp.bounds  # minx, miny, maxx, maxy in 4326
     print(f"query bbox (4326): {[round(v, 5) for v in bbox]}")
@@ -172,17 +193,19 @@ def main() -> int:
     for wu, its in sorted(by_wu.items()):
         print(f"  work unit group: {wu} × {len(its)}")
 
-    pima = [it for it in items if "PimaCo" in it.get("title", "") and "2021" in it.get("title", "")]
-    if not pima:
-        sys.exit("HALT: no AZ_PimaCo 2021 products returned — inspect data/raw/tnm_products.json")
+    wanted = [it for it in items
+              if all(sub in it.get("title", "") for sub in TITLE_MUST)]
+    if not wanted:
+        sys.exit(f"HALT: no products matching {TITLE_MUST} returned — "
+                 f"inspect {RAW / 'tnm_products.json'}")
 
     keep = []
-    for it in pima:
+    for it in wanted:
         bb = it["boundingBox"]
         tile_geom = box(bb["minX"], bb["minY"], bb["maxX"], bb["maxY"])
         if tile_geom.intersects(fp):
             keep.append(it)
-    print(f"{len(pima)} PimaCo 2021 products, {len(keep)} intersect the footprint:")
+    print(f"{len(wanted)} matching products, {len(keep)} intersect the footprint:")
 
     RAW.mkdir(parents=True, exist_ok=True)
     paths = []
@@ -214,4 +237,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--course", default=DEFAULT_COURSE)
+    raise SystemExit(main(parser.parse_args().course))

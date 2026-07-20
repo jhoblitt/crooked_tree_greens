@@ -117,7 +117,8 @@ def test_stage1_parsing_replays_committed_cache(sandbox, monkeypatch):
     from conftest import REPO
 
     m = sandbox("10_green_polygons")
-    monkeypatch.setattr(m, "CACHE_DIR", REPO / "data" / "polygons" / "cache")
+    monkeypatch.setattr(m, "CACHE_DIR",
+                        REPO / "courses" / "crooked_tree" / "polygons" / "cache")
 
     def no_network(*a, **k):
         raise AssertionError("cache miss: test tried to reach the network")

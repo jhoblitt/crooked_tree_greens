@@ -12,6 +12,7 @@ Writes data/interim/<label>_grid.npz. Slope sanity: on-green mean slope
 """
 
 import json
+import tomllib
 from pathlib import Path
 
 import numpy as np
@@ -23,8 +24,7 @@ from shapely.geometry import shape
 from shapely.ops import transform as shp_transform
 
 ROOT = Path(__file__).resolve().parent.parent
-POLY_DIR = ROOT / "data" / "polygons"
-INTERIM = ROOT / "data" / "interim"
+DEFAULT_COURSE = "crooked_tree"
 
 DX = 0.25
 GREEN_BUFFER_M = 12.0
@@ -33,7 +33,23 @@ LAMBDAS = np.logspace(-3, 4, 15)
 FIT_MAX_PTS = 3500
 SUSTAIN_M = 1.0
 
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:6341", always_xy=True).transform
+def load_course(slug):
+    with open(ROOT / "courses" / slug / "course.toml", "rb") as fh:
+        cfg = tomllib.load(fh)
+    cfg["slug"] = slug
+    return cfg
+
+
+def set_course(slug):
+    global CFG, POLY_DIR, INTERIM, TO_UTM
+    CFG = load_course(slug)
+    POLY_DIR = ROOT / "courses" / slug / "polygons"
+    INTERIM = ROOT / "data" / "interim" / slug
+    TO_UTM = Transformer.from_crs("EPSG:4326", f"EPSG:{CFG['crs']['utm_epsg']}",
+                                  always_xy=True).transform
+
+
+set_course(DEFAULT_COURSE)
 
 
 def fit_plane(xy, z):
@@ -67,7 +83,9 @@ def sweep_lambda(xy_fit, resid_fit, xy_all, resid_all):
     return rbf, lam, rms, note, history
 
 
-def main() -> int:
+def main(course=None) -> int:
+    if course:
+        set_course(course)
     feats = json.loads((POLY_DIR / "greens.geojson").read_text())["features"]
     rng = np.random.default_rng(6341)
     any_flag = False
@@ -167,4 +185,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--course", default=DEFAULT_COURSE)
+    raise SystemExit(main(parser.parse_args().course))

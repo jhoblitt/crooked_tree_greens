@@ -2,9 +2,9 @@
 """Stage 7: assemble the static GitHub Pages site into site/.
 
 Stdlib only — CI runs this without installing the pipeline's dependencies.
-Builds an index.html gallery of every green's slope heatmap (toggleable to
-contours) from outputs/greens/index.json + per-green meta.json, and copies the
-PNGs and the folium overview map alongside it.
+Every course under courses/ with an outputs/greens/index.json gets its own
+gallery at site/<slug>/ (slope/contours/pin-zone toggle per green), and the
+root index.html is a course picker.
 """
 
 import html
@@ -13,9 +13,9 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "outputs" / "greens"
+COURSES = ROOT / "courses"
 SITE = ROOT / "site"
-REPO = "https://github.com/jhoblitt/crooked_tree_greens"
+REPO = "https://github.com/jhoblitt/green_maps"
 
 CSS = """
 :root { --bg:#f6f7f9; --card:#fff; --ink:#23282e; --muted:#6b737d;
@@ -49,6 +49,11 @@ h1 { font-size:24px; margin:0 0 4px; }
 .links { font-size:13px; margin-top:6px; }
 a { color:var(--accent); }
 footer { color:var(--muted); font-size:13px; padding-bottom:34px; }
+.course-card { display:block; text-decoration:none; color:var(--ink);
+               background:var(--card); border:1px solid var(--line);
+               border-radius:10px; padding:16px 18px; }
+.course-card:hover { border-color:var(--accent); }
+.course-card h2 { margin:0 0 4px; font-size:18px; }
 """
 
 JS = """
@@ -62,7 +67,7 @@ function show(kind) {
 """
 
 
-def card(g, meta):
+def green_card(slug, g, meta):
     label = g["label"]
     name = f"Hole {g['hole']}" if g["hole"] else label.replace("_", " ").title()
     flags = "".join(f'<span class="flag">{html.escape(f)}</span>' for f in g["flags"])
@@ -85,45 +90,57 @@ def card(g, meta):
         · Δz {g["elevation_range_m"]:.2f} m · fit {g["fit_rms_m"]*100:.1f} cm
         · legal pin {pz["legal_area_m2"]:.0f}&#8239;m² ({pz["legal_fraction"]*100:.0f}%)</p>
       {flags}
-      <p class="links"><a href="{REPO}/tree/main/outputs/greens/{label}">assets
+      <p class="links"><a href="{REPO}/tree/main/courses/{slug}/outputs/greens/{label}">assets
         (heightmap, mesh, pin zones)</a></p>
     </div>
   </div>"""
 
 
-def main() -> int:
-    idx = json.loads((OUT / "index.json").read_text())
-    if SITE.exists():
-        shutil.rmtree(SITE)
-    SITE.mkdir(parents=True)
-
-    cards = []
-    for g in idx["greens"]:
-        label = g["label"]
-        meta = json.loads((OUT / label / "meta.json").read_text())
-        dst = SITE / "greens" / label
-        dst.mkdir(parents=True)
-        for png in ("slope_heatmap.png", "contours.png", "pin_zones.png"):
-            shutil.copy2(OUT / label / png, dst / png)
-        cards.append(card(g, meta))
-
-    overview = ROOT / "reports" / "greens_overview.html"
-    if overview.exists():
-        shutil.copy2(overview, SITE / "greens_overview.html")
-
-    dates = ", ".join(idx["acquisition_dates"])
-    page = f"""<!doctype html>
+def page(title_html, header_extra, body, footer_extra=""):
+    return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crooked Tree greens — heatmaps</title>
+<title>{title_html}</title>
 <style>{CSS}</style>
 </head>
 <body>
 <header>
-  <h1>Crooked Tree Golf Course — green surface maps</h1>
-  <p class="sub">{html.escape(idx["course"])} · USGS 3DEP LiDAR
+{header_extra}
+</header>
+<main>
+{body}
+</main>
+<footer>{footer_extra} code Apache-2.0, map data © OpenStreetMap contributors (ODbL),
+  LiDAR public domain (USGS 3DEP).</footer>
+<script>{JS}</script>
+</body>
+</html>
+"""
+
+
+def build_course(slug, out_dir):
+    idx = json.loads((out_dir / "index.json").read_text())
+    dst_root = SITE / slug
+    cards = []
+    for g in idx["greens"]:
+        label = g["label"]
+        meta = json.loads((out_dir / label / "meta.json").read_text())
+        dst = dst_root / "greens" / label
+        dst.mkdir(parents=True)
+        for png in ("slope_heatmap.png", "contours.png", "pin_zones.png"):
+            shutil.copy2(out_dir / label / png, dst / png)
+        cards.append(green_card(slug, g, meta))
+
+    overview = COURSES / slug / "reports" / "greens_overview.html"
+    if overview.exists():
+        shutil.copy2(overview, dst_root / "greens_overview.html")
+
+    dates = ", ".join(idx["acquisition_dates"])
+    header = f"""
+  <h1>{html.escape(idx["course"])} — green surface maps</h1>
+  <p class="sub">USGS 3DEP LiDAR
     ({html.escape(", ".join(idx["source_work_units"]))}, acquired {dates}) ·
     {idx["cell_size_m"]} m grid · status {idx["status"]}</p>
   <p class="sub">{html.escape(idx["vertical_fidelity"])}.</p>
@@ -133,24 +150,48 @@ def main() -> int:
       <button data-kind="contours" onclick="show('contours')">contours (2.5 cm)</button>
       <button data-kind="pins" onclick="show('pins')">legal pin zones</button>
     </div>
+    <a href="../">all courses</a>
     <a href="greens_overview.html">course overview map</a>
-    <a href="{REPO}/blob/main/reports/qc_report.md">QC report</a>
-    <a href="{REPO}">repo</a>
-  </div>
-</header>
-<main>
-  <div class="grid">{"".join(cards)}
-  </div>
-</main>
-<footer>Generated {html.escape(idx["generated"])} · heights NAVD88 m (EPSG:6341 grid) ·
-  arrows point downhill · code Apache-2.0, map data © OpenStreetMap contributors (ODbL),
-  LiDAR public domain (USGS 3DEP).</footer>
-<script>{JS}</script>
-</body>
-</html>
-"""
-    (SITE / "index.html").write_text(page)
-    print(f"site: {len(cards)} greens -> {SITE.relative_to(ROOT)}/index.html")
+    <a href="{REPO}/blob/main/courses/{slug}/reports/qc_report.md">QC report</a>
+  </div>"""
+    body = f'  <div class="grid">{"".join(cards)}\n  </div>'
+    footer = f"Generated {html.escape(idx['generated'])} · heights {html.escape(idx['crs_vertical'])} · arrows point downhill ·"
+    (dst_root / "index.html").write_text(
+        page(f"{html.escape(idx['course'])} — greens", header, body, footer))
+    return idx
+
+
+def main() -> int:
+    if SITE.exists():
+        shutil.rmtree(SITE)
+    SITE.mkdir(parents=True)
+
+    course_cards = []
+    n = 0
+    for cdir in sorted(COURSES.iterdir()):
+        out_dir = cdir / "outputs" / "greens"
+        if not (out_dir / "index.json").exists():
+            continue
+        idx = build_course(cdir.name, out_dir)
+        n += 1
+        n_greens = len(idx["greens"])
+        n_holes = len([g for g in idx["greens"] if g["hole"]])
+        course_cards.append(f"""
+  <a class="course-card" href="{cdir.name}/">
+    <h2>{html.escape(idx["course"].split(",")[0])}</h2>
+    <p class="stats">{n_holes} hole greens · {n_greens} surfaces · status {idx["status"]}
+      · acquired {html.escape(", ".join(idx["acquisition_dates"]))}</p>
+  </a>""")
+        print(f"site: {cdir.name}: {n_greens} greens")
+
+    header = """
+  <h1>green_maps — LiDAR putting-green surface models</h1>
+  <p class="sub">Simulation-ready heightmaps, meshes, slope/contour maps, and legal
+    pin zones derived from public USGS 3DEP LiDAR.</p>
+  <div class="controls"><a href="{repo}">repo</a></div>""".replace("{repo}", REPO)
+    body = f'  <div class="grid">{"".join(course_cards)}\n  </div>'
+    (SITE / "index.html").write_text(page("green_maps — courses", header, body))
+    print(f"site: {n} course(s) -> site/index.html")
     return 0
 
 

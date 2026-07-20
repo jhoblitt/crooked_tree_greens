@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
-"""Stage 1: green polygons for Crooked Tree Golf Course.
+"""Stage 1: green polygons for one course (--course <slug>).
 
 Primary source: OSM Overpass (golf=green within the course polygon), with hole
 numbers assigned from golf=hole line pin endpoints. If OSM coverage is
-incomplete, merges data/polygons/greens_manual.geojson (user-digitized) when
-present; otherwise writes reports/digitize_map.html and exits 2 so a human can
-draw the missing greens.
+incomplete, merges courses/<slug>/polygons/greens_manual.geojson
+(user-digitized) when present; otherwise writes reports/digitize_map.html and
+exits 2 so a human can draw the missing greens.
 
-Outputs: data/polygons/course.geojson, data/polygons/greens.geojson,
-reports/greens_overview.html. All downloads cached under data/polygons/cache/.
+Outputs under courses/<slug>/: polygons/course.geojson, polygons/greens.geojson,
+polygons/hole_lines.geojson, reports/greens_overview.html. All downloads cached
+under polygons/cache/.
 """
 
 import hashlib
 import json
 import sys
 import time
+import tomllib
 from pathlib import Path
 
 import folium
@@ -22,27 +24,49 @@ import folium.plugins
 import requests
 from pyproj import Transformer
 from shapely.geometry import LineString, Point, Polygon, mapping, shape
+from shapely.ops import linemerge, polygonize, unary_union
 from shapely.ops import transform as shp_transform
 
 ROOT = Path(__file__).resolve().parent.parent
-POLY_DIR = ROOT / "data" / "polygons"
-CACHE_DIR = POLY_DIR / "cache"
-REPORTS = ROOT / "reports"
+DEFAULT_COURSE = "crooked_tree"
 
-COURSE_NAME_RE = "Crooked Tree"
-SEARCH_BBOX = (32.36, -111.09, 32.42, -111.01)  # s, w, n, e (CLAUDE.md seed)
-EXPECTED_HOLES = list(range(1, 19))
 AREA_MIN, AREA_MAX = 250.0, 1200.0
 PIN_SNAP_M = 30.0  # max distance from a hole-line endpoint to its green
 
-HDRS = {"User-Agent": "crooked-tree-greens/0.1 (josh@hoblitt.com)"}
+HDRS = {"User-Agent": "green-maps/0.1 (josh@hoblitt.com)"}
 MIRRORS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.private.coffee/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
 ]
 
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:6341", always_xy=True).transform
+
+def load_course(slug):
+    with open(ROOT / "courses" / slug / "course.toml", "rb") as fh:
+        cfg = tomllib.load(fh)
+    cfg["slug"] = slug
+    return cfg
+
+
+def set_course(slug):
+    global CFG, POLY_DIR, CACHE_DIR, REPORTS
+    global COURSE_NAME_RE, SEARCH_BBOX, EXPECTED_HOLES, NOMINATIM_QUERY, COURSE_OSM_ID
+    global TO_UTM
+    CFG = load_course(slug)
+    base = ROOT / "courses" / slug
+    POLY_DIR = base / "polygons"
+    CACHE_DIR = POLY_DIR / "cache"
+    REPORTS = base / "reports"
+    COURSE_NAME_RE = CFG["osm"]["name_re"]
+    SEARCH_BBOX = tuple(CFG["osm"]["search_bbox"])
+    EXPECTED_HOLES = CFG["holes"].get("refs") or list(range(1, CFG["holes"]["count"] + 1))
+    NOMINATIM_QUERY = CFG["osm"]["nominatim_query"]
+    COURSE_OSM_ID = CFG["osm"].get("course_osm_id")
+    TO_UTM = Transformer.from_crs("EPSG:4326", f"EPSG:{CFG['crs']['utm_epsg']}",
+                                  always_xy=True).transform
+
+
+set_course(DEFAULT_COURSE)
 
 
 def utm(geom):
@@ -83,7 +107,7 @@ def nominatim():
     def fetch():
         r = requests.get(
             "https://nominatim.openstreetmap.org/search",
-            params={"q": "Crooked Tree Golf Course, Tucson, AZ", "format": "jsonv2", "limit": 3},
+            params={"q": NOMINATIM_QUERY, "format": "jsonv2", "limit": 3},
             headers=HDRS,
             timeout=60,
         )
@@ -100,21 +124,63 @@ def way_polygon(el):
     return Polygon(coords)
 
 
+def relation_polygon(el):
+    """Assemble a (multi)polygon from a multipolygon relation's member ways.
+
+    Outer ways commonly arrive as split segments, so rings are rebuilt with
+    linemerge + polygonize rather than assuming each member closes on itself.
+    """
+    outers, inners = [], []
+    for m in el.get("members", []):
+        if m.get("type") != "way" or not m.get("geometry"):
+            continue
+        coords = [(p["lon"], p["lat"]) for p in m["geometry"]]
+        if len(coords) < 2:
+            continue
+        (inners if m.get("role") == "inner" else outers).append(LineString(coords))
+
+    def rings_to_poly(lines):
+        if not lines:
+            return None
+        merged = linemerge(unary_union(lines))
+        polys = list(polygonize(merged))
+        return unary_union(polys) if polys else None
+
+    outer = rings_to_poly(outers)
+    if outer is None:
+        return None
+    inner = rings_to_poly(inners)
+    return outer.difference(inner) if inner is not None else outer
+
+
+def element_polygon(el):
+    return way_polygon(el) if el["type"] == "way" else relation_polygon(el)
+
+
 def fetch_course():
     s, w, n, e = SEARCH_BBOX
     q = f"""[out:json][timeout:120];
-way["leisure"="golf_course"]["name"~"{COURSE_NAME_RE}",i]({s},{w},{n},{e});
+(
+  way["leisure"="golf_course"]["name"~"{COURSE_NAME_RE}",i]({s},{w},{n},{e});
+  relation["leisure"="golf_course"]["name"~"{COURSE_NAME_RE}",i]({s},{w},{n},{e});
+);
 out tags geom;"""
     els = overpass(q)["elements"]
     if len(els) != 1:
-        sys.exit(f"HALT: expected exactly 1 course way, got {len(els)}")
+        sys.exit(f"HALT: expected exactly 1 course way/relation matching "
+                 f"{COURSE_NAME_RE!r}, got {len(els)}")
     el = els[0]
-    poly = way_polygon(el)
+    poly = element_polygon(el)
+    if poly is None or poly.is_empty:
+        sys.exit(f"HALT: could not build a polygon from {el['type']} {el['id']}")
+    if COURSE_OSM_ID is not None and el["id"] != COURSE_OSM_ID:
+        sys.exit(f"HALT: course OSM id {el['id']} != configured {COURSE_OSM_ID}")
 
     hits = nominatim()
-    match = next((h for h in hits if h.get("osm_type") == "way" and int(h.get("osm_id", 0)) == el["id"]), None)
+    match = next((h for h in hits if int(h.get("osm_id", 0)) == el["id"]), None)
     if match:
-        print(f"  nominatim cross-check OK: way {el['id']} at ({match['lat']}, {match['lon']})")
+        print(f"  nominatim cross-check OK: {el['type']} {el['id']} "
+              f"at ({match['lat']}, {match['lon']})")
     else:
         near = [
             h for h in hits
@@ -143,16 +209,19 @@ out tags geom;"""
     greens, holes = [], []
     for el in els:
         tags = el.get("tags", {})
-        if tags.get("golf") == "green" and el["type"] == "way":
-            poly = way_polygon(el)
+        if tags.get("golf") == "green":
+            poly = element_polygon(el)
+            if poly is None or poly.is_empty:
+                print(f"  WARNING: could not build green polygon "
+                      f"({el['type']} {el['id']}), skipped")
+                continue
             if utm(poly).intersects(course_utm):
                 greens.append({"osm_id": el["id"], "poly": poly, "tags": tags})
-        elif tags.get("golf") == "green":
-            print(f"  WARNING: skipping non-way green ({el['type']} {el['id']})")
         elif tags.get("golf") == "hole":
             line = LineString([(p["lon"], p["lat"]) for p in el["geometry"]])
             if utm(line).intersects(course_utm) and tags.get("ref", "").isdigit():
-                holes.append({"osm_id": el["id"], "ref": int(tags["ref"]), "line": line})
+                holes.append({"osm_id": el["id"], "ref": int(tags["ref"]),
+                              "name": tags.get("name", ""), "line": line})
     return greens, holes
 
 
@@ -265,7 +334,7 @@ def overview_map(course_poly, feats, holes, missing):
                                      f"border-radius:4px;white-space:nowrap'>missing greens: "
                                      f"{', '.join(map(str, missing))}</div>"),
         ).add_to(m)
-    REPORTS.mkdir(exist_ok=True)
+    REPORTS.mkdir(parents=True, exist_ok=True)
     out = REPORTS / "greens_overview.html"
     m.save(str(out))
     print(f"  wrote {out.relative_to(ROOT)}")
@@ -307,6 +376,7 @@ def digitize_map(course_poly, feats, holes, missing):
     ).add_to(m)
     folium.LayerControl().add_to(m)
 
+    manual_rel = f"courses/{CFG['slug']}/polygons/greens_manual.geojson"
     instructions = """
     <div style='position:fixed;top:10px;left:60px;z-index:9999;background:#fff;padding:10px 14px;
                 border:2px solid #444;border-radius:6px;max-width:430px;font:13px sans-serif'>
@@ -315,9 +385,10 @@ def digitize_map(course_poly, feats, holes, missing):
     For each, zoom in and use the polygon tool (left toolbar) to trace the green's edge.
     Green outlines already in OSM are shown for reference. When done, click
     <b>Export</b> (top right) and save the download as
-    <code>data/polygons/greens_manual.geojson</code>, then rerun
-    <code>uv run scripts/10_green_polygons.py</code>.
-    </div>""".replace("{missing}", ", ".join(map(str, missing)))
+    <code>{manual}</code>, then rerun
+    <code>uv run scripts/10_green_polygons.py --course {slug}</code>.
+    </div>""".replace("{missing}", ", ".join(map(str, missing))) \
+             .replace("{manual}", manual_rel).replace("{slug}", CFG["slug"])
     m.get_root().html.add_child(folium.Element(instructions))
 
     out = REPORTS / "digitize_map.html"
@@ -325,10 +396,12 @@ def digitize_map(course_poly, feats, holes, missing):
     print(f"  wrote {out.relative_to(ROOT)}")
 
 
-def main() -> int:
+def main(course=None) -> int:
+    if course:
+        set_course(course)
     POLY_DIR.mkdir(parents=True, exist_ok=True)
 
-    print("course:")
+    print(f"course [{CFG['slug']}]:")
     course_el, course_poly = fetch_course()
     (POLY_DIR / "course.geojson").write_text(json.dumps({
         "type": "FeatureCollection",
@@ -336,7 +409,7 @@ def main() -> int:
                       "properties": {"osm_id": course_el["id"], **course_el.get("tags", {})},
                       "geometry": mapping(course_poly)}],
     }))
-    print(f"  way {course_el['id']}: {course_el['tags'].get('name')} "
+    print(f"  {course_el['type']} {course_el['id']}: {course_el['tags'].get('name')} "
           f"({course_el['tags'].get('description', '')})")
 
     print("greens + hole lines:")
@@ -344,7 +417,8 @@ def main() -> int:
     (POLY_DIR / "hole_lines.geojson").write_text(json.dumps({
         "type": "FeatureCollection",
         "features": [{"type": "Feature",
-                      "properties": {"hole": h["ref"], "osm_id": h["osm_id"]},
+                      "properties": {"hole": h["ref"], "osm_id": h["osm_id"],
+                                     "name": h.get("name", "")},
                       "geometry": mapping(h["line"])} for h in sorted(holes, key=lambda h: h["ref"])],
     }))
     greens += load_manual()
@@ -370,21 +444,27 @@ def main() -> int:
 
     overview_map(course_poly, feats, holes, missing)
 
+    n_expected = len(EXPECTED_HOLES)
     bad_area = [f["properties"]["label"] for f in feats if f["properties"].get("area_flag")]
     if missing:
         digitize_map(course_poly, feats, holes, missing)
-        print(f"\nCHECKPOINT FAILED: {len(have)}/18 hole greens in OSM "
+        print(f"\nCHECKPOINT FAILED: {len(have)}/{n_expected} hole greens in OSM "
               f"(+{n_practice} practice); missing holes: {missing}")
-        print("Open reports/digitize_map.html, trace the missing greens, export to "
-              "data/polygons/greens_manual.geojson, then rerun this script.")
+        print(f"Open courses/{CFG['slug']}/reports/digitize_map.html, trace the missing "
+              f"greens, export to courses/{CFG['slug']}/polygons/greens_manual.geojson, "
+              f"then rerun this script with --course {CFG['slug']}.")
         return 2
     if bad_area:
         print(f"\nCHECKPOINT FAILED: area sanity violations: {bad_area}")
         return 2
-    print(f"\nCHECKPOINT OK: 18/18 hole greens (+{n_practice} practice), all areas in "
-          f"[{AREA_MIN:.0f}, {AREA_MAX:.0f}] m²")
+    print(f"\nCHECKPOINT OK: {len(have)}/{n_expected} hole greens (+{n_practice} practice), "
+          f"all areas in [{AREA_MIN:.0f}, {AREA_MAX:.0f}] m²")
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--course", default=DEFAULT_COURSE)
+    raise SystemExit(main(parser.parse_args().course))

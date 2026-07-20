@@ -1,0 +1,33 @@
+name = "Crooked Tree Golf Course"
+location = "Arthur Pack Regional Park, 9101 N Thornydale Rd, Tucson, AZ 85742"
+
+[osm]
+name_re = "Crooked Tree"
+search_bbox = [32.36, -111.09, 32.42, -111.01]  # s, w, n, e
+nominatim_query = "Crooked Tree Golf Course, Tucson, AZ"
+course_osm_id = 263321891
+
+[holes]
+count = 18
+
+[lidar]
+title_must_contain = ["PimaCo", "2021"]
+
+[crs]
+utm_epsg = 6341
+accept_horizontal_epsg = [6341, 26912]
+horizontal_desc = "EPSG:6341 NAD83(2011) / UTM zone 12N (m)"
+vertical_desc = "EPSG:5703 NAVD88 height (m), GEOID18"
+
+[qc]
+notes = """this course is built on a north-sloping bajada, so \
+sustained-slope flags are mostly real terrain, and all flagged fits are still \
+in the 3–6 cm residual band. Specifics from visual QC of the slope heatmaps: \
+hole_03's 17% band is a steep bank clipped by the polygon's west edge (trim \
+~1–2 m or accept as collar); hole_13 genuinely tilts 4–6% north with its NW \
+corner touching a bank; hole_18 sits on a uniform hillside (heaviest smoothing \
+still fits at 3.6 cm); practice_1's 874 m² OSM polygon appears overdrawn and \
+contains a mound band. Manually digitized polygons (holes 3–8, 12–17) and both \
+practice greens carry needs_review by construction — check edges against each \
+slope heatmap. Hole numbers were assigned from golf=hole line pin endpoints, \
+which may not match the scorecard — confirm numbering before use."""
