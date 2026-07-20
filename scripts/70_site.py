@@ -135,6 +135,7 @@ viewer.addEventListener('wheel', e => {
   zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX - r.left, e.clientY - r.top);
 }, { passive: false });
 viewer.addEventListener('pointerdown', e => {
+  if (e.target.closest('.vbtns')) return;  // let zoom/reset buttons receive the click
   dragging = true; px = e.clientX; py = e.clientY;
   viewer.setPointerCapture(e.pointerId); viewer.style.cursor = 'grabbing';
 });

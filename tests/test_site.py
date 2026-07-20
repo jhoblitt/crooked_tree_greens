@@ -63,6 +63,8 @@ def test_green_pages_have_viewer_and_navigation(sandbox):
     # pan/zoom viewer with zoom + reset controls
     assert 'id="viewer"' in page and 'id="view"' in page
     assert "zoomBtn(1.3)" in page and "resetView()" in page
+    # the pointerdown guard that lets the zoom buttons actually fire
+    assert "e.target.closest('.vbtns')" in page
     # return navigation + prev/next (wraps)
     assert 'href="../../"' in page
     assert 'href="../../greens_overview.html"' in page

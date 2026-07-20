@@ -414,12 +414,30 @@ def uniquify_practice(feats):
         f["properties"]["label"] = f"practice_{i}" if len(practice) > 1 else "practice"
 
 
+def overview_tag(props):
+    """Short label for a green on the overview map: nine-abbreviated for
+    multi-nine courses (Pa2/Pi7/Ga8), the hole number otherwise, P/P1 for
+    practice greens."""
+    if props.get("nine") and props.get("nine_hole"):
+        return f"{props['nine'][:2]}{props['nine_hole']}"
+    if props["hole"]:
+        return str(props["hole"])
+    suffix = props["label"].split("_", 1)[1] if "_" in props["label"] else ""
+    return "P" + suffix
+
+
 def overview_map(course_poly, feats, holes, missing):
     from folium.utilities import JsCode
 
     c = course_poly.centroid
-    m = folium.Map(location=[c.y, c.x], zoom_start=16, tiles=None)
-    folium.TileLayer("Esri.WorldImagery", name="Esri World Imagery").add_to(m)
+    m = folium.Map(location=[c.y, c.x], zoom_start=16, tiles=None, max_zoom=21)
+    folium.TileLayer("Esri.WorldImagery", name="Esri World Imagery",
+                     max_native_zoom=19, max_zoom=21).add_to(m)
+    # Labels sit above the polygons; make them click-through so a click on the
+    # hole number still opens the green.
+    m.get_root().html.add_child(folium.Element(
+        "<style>.green-label{pointer-events:none;font-weight:bold;color:#fff;"
+        "text-shadow:0 0 3px #000;white-space:nowrap;}</style>"))
     open_green = JsCode(
         """(feature, layer) => {
           layer.on('click', () => {
@@ -432,22 +450,20 @@ def overview_map(course_poly, feats, holes, missing):
     ).add_to(m)
     for h in holes:
         folium.PolyLine([(la, lo) for lo, la in h["line"].coords],
-                        color="#66ccff", weight=1, opacity=0.6).add_to(m)
+                        color="#66ccff", weight=1, opacity=0.5).add_to(m)
     for f in feats:
         p = f["properties"]
-        color = "#ff9900" if p["needs_review"] else "#00e64d"
         folium.GeoJson(
             f,
-            style_function=lambda _, color=color: {"color": color, "weight": 2, "fillOpacity": 0.25},
-            tooltip=f"{p.get('display') or p['label']} · {p['area_m2']} m² · "
-                    f"{p['hole_source']} · click to open",
+            style_function=lambda _: {"color": "#00e64d", "weight": 2, "fillOpacity": 0.2},
+            tooltip=f"{p.get('display') or p['label']} · {p['area_m2']} m² · click to open",
             on_each_feature=open_green,
         ).add_to(m)
         cc = shape(f["geometry"]).centroid
         folium.Marker(
             [cc.y, cc.x],
-            icon=folium.DivIcon(html=f"<div style='color:white;font-weight:bold;"
-                                     f"text-shadow:0 0 3px black'>{p['label'].replace('hole_', '')}</div>"),
+            icon=folium.DivIcon(class_name="green-label",
+                                html=f"<div>{overview_tag(p)}</div>"),
         ).add_to(m)
     if missing:
         folium.map.Marker(

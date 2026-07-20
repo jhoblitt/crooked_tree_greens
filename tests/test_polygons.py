@@ -205,17 +205,37 @@ def test_load_manual_absent_is_empty(sandbox):
     assert m.load_manual() == []
 
 
-def test_overview_map_greens_are_clickable(sandbox):
+def test_overview_tag_is_short_and_unambiguous():
+    def props(**kw):
+        base = {"hole": 0, "label": "practice", "nine": None, "nine_hole": None}
+        base.update(kw)
+        return base
+    assert mod.overview_tag(props(hole=7, label="hole_07")) == "7"
+    assert mod.overview_tag(props(hole=2, label="palmer_02",
+                                  nine="Palmer", nine_hole=2)) == "Pa2"
+    assert mod.overview_tag(props(hole=8, label="gambler_08",
+                                  nine="Gambler", nine_hole=8)) == "Ga8"
+    assert mod.overview_tag(props(hole=7, label="pioneer_07",
+                                  nine="Pioneer", nine_hole=7)) == "Pi7"
+    assert mod.overview_tag(props(hole=0, label="practice")) == "P"
+    assert mod.overview_tag(props(hole=0, label="practice_2")) == "P2"
+
+
+def test_overview_map_greens_are_clickable_and_uniform(sandbox):
     m = sandbox("10_green_polygons")
-    g = green(BASE_E, BASE_N, osm_id=1)
-    g["hole"], g["hole_source"] = 7, "hole_line"
-    feats = [m.green_feature(g)]
+    review = m.green_feature({**green(BASE_E, BASE_N, osm_id=1),
+                              "hole": 7, "hole_source": "hole_line"})
+    manual = m.green_feature({**green(BASE_E + 40, BASE_N, osm_id=2),
+                              "manual": True, "hole": 8, "hole_source": "manual"})
     course = shape(utm_disk(BASE_E, BASE_N, 200.0))
-    m.overview_map(course, feats, [], [])
+    m.overview_map(course, [review, manual], [], [])
     html_text = (m.REPORTS / "greens_overview.html").read_text()
     assert "window.location.href = 'greens/' + feature.properties.label" in html_text
-    assert "hole_07" in html_text
-    assert "click to open" in html_text
+    assert "hole_07" in html_text and "click to open" in html_text
+    # uniform styling: no needs_review orange, labels click-through, deeper zoom
+    assert "#ff9900" not in html_text
+    assert "pointer-events:none" in html_text and "green-label" in html_text
+    assert '"maxNativeZoom": 19' in html_text and '"maxZoom": 21' in html_text
 
 
 def test_stage1_parsing_replays_committed_cache(sandbox, monkeypatch):
