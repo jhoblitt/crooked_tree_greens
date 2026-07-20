@@ -1,14 +1,20 @@
-# CLAUDE.md — Crooked Tree Greens: LiDAR → 3D Surface Models
+# CLAUDE.md — green_maps: LiDAR → 3D Putting-Green Surface Models
 
 ## Project goal
 
-Build simulation-ready 3D surface models of every putting green at **Crooked Tree Golf Course (Arthur Pack Regional Park), 9101 N Thornydale Rd, Tucson, AZ 85742** from public USGS 3DEP LiDAR. Outputs feed a rigid-sphere-on-heightmap putting physics simulation.
+Build simulation-ready 3D surface models of putting greens from public USGS
+3DEP LiDAR — one course-agnostic pipeline, many courses. Per-course facts
+(name, OSM query/id, hole structure, LiDAR work-unit filter, CRS, QC notes)
+live in `courses/<slug>/course.toml`; every stage takes `--course <slug>`
+(default `crooked_tree`). Outputs feed a rigid-sphere-on-heightmap putting
+physics simulation. Built so far: `crooked_tree` (18 holes + 2 practice,
+way 263321891), `starr_pass` (27 holes as three nines, relation 14067367).
 
 Final deliverable per green: a regular-grid heightmap (meters, Z-up, local origin), a triangle mesh (OBJ + GLB), slope/contour QC plots, and a `meta.json`. Plus one repo-level QC report.
 
 ## Ground rules
 
-- Work stage by stage (Stage 0 → 7). Each stage is a numbered, idempotent script in `scripts/`. Cache all downloads; never re-fetch on rerun.
+- Work stage by stage (Stage 0 → 7). Each stage is a numbered, idempotent script in `scripts/` taking `--course <slug>`. Cache all downloads; never re-fetch on rerun.
 - **Halt on QC failure** at any checkpoint and report, rather than proceeding with bad data.
 - After any change to pipeline plumbing (`scripts/*.py`), run `uv run pytest` (synthetic-data regression suite in `tests/`, ~6 min, no network) and get it green before committing.
 - All geometry math in a **projected metric CRS (NAD83(2011) / UTM 12N, EPSG:6341; EPSG:26912 acceptable)**. Never compute slopes or distances in EPSG:3857 or 4326.
@@ -19,37 +25,39 @@ Core deps: `numpy scipy laspy[lazrs] pyproj shapely rasterio matplotlib trimesh 
 
 ## Known facts and things to VERIFY (do not skip)
 
-Facts (verified at runtime 2026-07-06; Stage 2 re-asserts the load-bearing ones):
-- The course is covered by USGS 3DEP work unit **`AZ_PimaCounty_2021_B21`** (TNM
-  product titles `USGS Lidar Point Cloud AZ_PimaCounty_2021_B21 <tile>`; open
-  access, public domain), acquired **2021-10-04** (from point GPS times),
-  published 2023-03-24. Two 1 km tiles (494580, 494581) cover every green.
-- Tiles are natively **NAD83(2011)/UTM 12N (EPSG:6341) + NAVD88 Geoid18
-  (EPSG:5703), meters horizontal AND vertical**, LAS 1.4 pf6 — no reprojection
-  or feet conversion was needed. Stage 2 halts if a re-download disagrees.
-- Course = OSM way **263321891**, centroid **(32.37498, -111.05584)**; Nominatim
-  cross-check passes. (The original planning seed 32.394, -111.049 was ~2.2 km
-  off — never seed searches from it again.)
+Facts (verified at runtime; Stage 2 re-asserts the load-bearing ones):
+- Both Tucson courses are covered by USGS 3DEP work unit
+  **`AZ_PimaCounty_2021_B21`** (open access, public domain), acquired
+  **2021-10-04** (from point GPS times), natively **NAD83(2011)/UTM 12N
+  (EPSG:6341) + NAVD88 Geoid18 (EPSG:5703), meters horizontal AND vertical**,
+  LAS 1.4 pf6 — no reprojection or feet conversion needed. Stage 2 halts if a
+  download disagrees with the course.toml CRS expectations.
+- crooked_tree = OSM way **263321891**, centroid (32.37498, -111.05584).
+  starr_pass = OSM **relation 14067367** (multipolygon), all 27 greens mapped.
 - 3DEP LAZ point clouds are free via the TNM Access API and as Entwine Point Tiles (EPT) in the `usgs-lidar-public` S3 bucket.
-- The EPT copies in `usgs-lidar-public` are reprojected to **EPSG:3857** — horizontal scale at this latitude is distorted ~18%. Reproject to UTM 12N before any slope/distance computation. (EPT path is unused; no PDAL here.)
+- The EPT copies in `usgs-lidar-public` are reprojected to **EPSG:3857** — horizontal scale at this latitude is distorted ~18%. Reproject to UTM before any slope/distance computation. (EPT path is unused; no PDAL here.)
 
 Still unverified / recheck on rerun:
 1. Hole numbering came from `golf=hole` line pin endpoints, not scorecard —
-   unconfirmed by a human.
+   unconfirmed by a human. For starr_pass the nine letters (a/b/c → holes
+   1–9/10–18/19–27, ordered west to east) are SYNTHETIC; the mapping to the
+   scorecard nines (Rattler/Roadrunner/Coyote) is unconfirmed.
 2. Greens may have been altered since the 2021-10-04 acquisition.
 
 ## Pipeline
 
 ### Stage 0 — Environment + repo layout
 ```
-crooked_tree_greens/  # github.com/jhoblitt/crooked_tree_greens (local dir: green_maps)
-  scripts/            # 00_env_check.py ... 70_site.py
-  data/raw/           # LAZ tiles as downloaded (gitignored)
-  data/polygons/      # course/greens/hole_lines.geojson, greens_manual.geojson, cache/
-  data/interim/       # per-green clipped points + fitted grids (npz, gitignored)
-  outputs/greens/<label>/   # final artifacts; label = hole_NN or practice_N
-  reports/
-  site/               # Pages gallery built by 70_site.py (gitignored)
+green_maps/           # github.com/jhoblitt/green_maps
+  scripts/            # 00_env_check.py ... 70_site.py (all take --course <slug>)
+  courses/<slug>/
+    course.toml       # name, OSM query/id, hole structure, work-unit filter, CRS, QC notes
+    polygons/         # course/greens/hole_lines.geojson, greens_manual.geojson, cache/
+    outputs/greens/<label>/   # final artifacts; label = hole_NN or practice_N
+    reports/
+  data/raw/<slug>/    # LAZ tiles as downloaded (gitignored)
+  data/interim/<slug>/  # per-green clipped points + fitted grids (npz, gitignored)
+  site/               # Pages: course picker + per-course galleries (gitignored)
 ```
 `00_env_check.py`: import all deps, print versions, confirm outbound HTTPS to `tnmaccess.nationalmap.gov` and `overpass-api.de`.
 
@@ -62,22 +70,32 @@ out geom;
 ```
 then query `way["golf"="green"]` within the course bbox. Save as `data/polygons/greens.geojson` (EPSG:4326), one feature per green, attribute `hole` (int; use `ref`/`name` tags if present, else label sequentially and flag for human review).
 
-OSM reality (2026-07): only 8 greens are mapped (6 hole + 2 practice), with no
-`ref` tags; all 18 `golf=hole` lines exist. Hole numbers are therefore assigned
-from the hole line whose pin-end terminates in/near each green (30 m snap), and
-the script also emits `data/polygons/hole_lines.geojson` for Stage 2.
+Course polygons may be OSM ways or multipolygon **relations** (starr_pass is
+one); relation members' split outer ways are rebuilt via linemerge+polygonize.
+Hole numbers are assigned from the hole line whose pin-end terminates in/near
+each green (30 m snap); `hole_lines.geojson` is emitted for Stage 2. Courses
+built as N nines with duplicate per-nine refs (`[holes] nines = N` in
+course.toml) are spatially chained (hole k's green abuts hole k+1's tee),
+ordered west→east, and flattened to unique hole numbers 1..9N — the nine
+letters are synthetic until a human confirms them against the scorecard.
+Green-area sanity bounds default to 250–1,200 m² (`[holes] area_m2` overrides).
 
-Fallback for unmapped greens: generate `reports/digitize_map.html` — a folium map
-over Esri World Imagery with a drawing plugin, red flags at each missing hole's
-pin — and STOP. The user traces the missing greens, clicks Export, and saves the
-download as `data/polygons/greens_manual.geojson` (the browser names it
+crooked_tree OSM reality (2026-07): only 8 greens mapped (6 hole + 2 practice),
+no `ref` tags; all 18 hole lines exist — 12 greens were hand-digitized.
+starr_pass: all 27 greens and 27 hole lines are mapped; nothing to digitize.
+
+Fallback for unmapped greens: generate `courses/<slug>/reports/digitize_map.html`
+— a folium map over Esri World Imagery with a drawing plugin, red flags at each
+missing hole's pin — and STOP. The user traces the missing greens, clicks
+Export, and saves the download as
+`courses/<slug>/polygons/greens_manual.geojson` (the browser names it
 `data.geojson` — it must be renamed), then reruns Stage 1, which merges it and
 auto-assigns hole numbers. Manual polygons are flagged `needs_review`.
 
-Checkpoint: 18 hole greens (+ practice greens; this course has two, labeled
-`practice_1`/`practice_2`). Render all polygons on a folium satellite map
-(`reports/greens_overview.html`) for eyeball QC. Each polygon area sanity:
-250–1,200 m².
+Checkpoint: every configured hole has exactly one green (+ any practice
+greens, labeled `practice_N`). Render all polygons on a folium satellite map
+(`reports/greens_overview.html`) for eyeball QC, and check areas against the
+sanity bounds.
 
 ### Stage 2 — Point acquisition
 Buffer each green polygon by **12 m** (collar/surrounds provide sim boundary and fitting support). Union the buffered set — plus 40 m disks around both endpoints of any hole line whose green is not yet digitized, so one download session covers greens added later — and take its bbox in EPSG:4326.
@@ -136,14 +154,15 @@ are genuinely 0. Slope here is macro slope, same caveat as the surface.
 `reports/qc_report.md`: table of all greens (density, residual RMS, λ, mean/max slope, elevation range, flags), links to per-green PNGs, list of anything halted/flagged, and the data-honesty paragraph above. Also emit `outputs/greens/index.json` enumerating all greens for the sim to consume.
 
 ### Stage 7 — Pages gallery
-`70_site.py` (stdlib only — CI installs nothing) assembles `site/`: an
-index.html gallery of every green's slope heatmap with a contours toggle, per-
-green stats/flags, and the folium overview map. `.github/workflows/pages.yml`
-(putttron-style, SHA-pinned actions) rebuilds and deploys it to
-<https://jhoblitt.github.io/crooked_tree_greens/> on every push to main.
+`70_site.py` (stdlib only — CI installs nothing) assembles `site/`: a course
+picker at the root plus, per built course, a gallery of every green's slope
+heatmap with contours and legal-pin-zone toggles, per-green stats/flags, and
+the folium overview map. `.github/workflows/pages.yml` (putttron-style,
+SHA-pinned actions) rebuilds and deploys it to
+<https://jhoblitt.github.io/green_maps/> on every push to main.
 
-## Definition of done
-- 18 greens (+ practice green if polygon exists) each with all artifacts present (heightmap, mesh, slope/contour/pin-zone plots, pin-zone raster/vector, meta).
+## Definition of done (per course)
+- Every configured hole's green (+ practice greens where mapped) with all artifacts present (heightmap, mesh, slope/contour/pin-zone plots, pin-zone raster/vector, meta).
 - No green below 0.8 pts/m² class-2 density without an explicit note.
 - All fit residual RMS values in (or documented near) the 3–6 cm band.
 - All slope sanity checks pass or are flagged with explanation.
@@ -157,4 +176,6 @@ green stats/flags, and the folium overview map. `.github/workflows/pages.yml`
 - Exact-interpolating through raw points produces garbage micro-break that looks like signal. Smooth to the 3–6 cm residual band instead.
 - OSM hole numbering (`ref` tags) may not match the scorecard; flag for human confirmation rather than guessing.
 - Desert course: class-2 coverage on greens should be dense (open turf), but overhanging trees near collars can thin edges — the 12 m buffer + spline handles this; do not extrapolate meshes past the buffered polygon.
-- `overpass-api.de` 504s routinely under load. The scripts rotate through mirrors (kumi.systems, private.coffee) with backoff and cache every response under `data/polygons/cache/` — keep it that way.
+- `overpass-api.de` 504s routinely under load. The scripts rotate through mirrors (kumi.systems, private.coffee) with backoff and cache every response under `courses/<slug>/polygons/cache/` — keep it that way. Changing a query's text changes its cache key: the old cache entry is orphaned and the query re-fetches live once.
+- Overpass `out tags geom;` includes way geometry but SILENTLY DROPS relation members (member lists are body-level verbosity). Use `out geom;` when relations matter — this bit us on starr_pass's multipolygon course.
+- Multi-nine courses duplicate refs 1–9 per nine with no nine names in OSM. The spatial chaining in Stage 1 is a heuristic: always eyeball `greens_overview.html` and get the nine↔scorecard mapping confirmed.
