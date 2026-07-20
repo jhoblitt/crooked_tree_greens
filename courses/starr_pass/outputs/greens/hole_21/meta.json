@@ -1,0 +1,76 @@
+{
+ "hole": 21,
+ "label": "hole_21",
+ "needs_review": false,
+ "hole_source": "hole_line",
+ "source_work_units": [
+  "USGS Lidar Point Cloud AZ_PimaCounty_2021_B21"
+ ],
+ "acquisition_dates": [
+  "2021-10-03"
+ ],
+ "tiles": [
+  "USGS_LPC_AZ_PimaCounty_2021_B21_496563.laz"
+ ],
+ "crs_horizontal": "EPSG:6341 NAD83(2011) / UTM zone 12N (m)",
+ "crs_vertical": "EPSG:5703 NAVD88 height (m), GEOID18",
+ "cell_size_m": 0.25,
+ "grid_shape": [
+  231,
+  191
+ ],
+ "grid_origin_north_up": [
+  496437.5,
+  3564294.75
+ ],
+ "local_origin_utm": [
+  496461.28812889144,
+  3564266.350579531,
+  789.74609375
+ ],
+ "green_area_m2": 489.1,
+ "class2_density_on_green_pts_m2": 8.35,
+ "n_points_fit_region": 16385,
+ "lambda": 10.0,
+ "fit_rms_m": 0.0386,
+ "fit_band_note": "in_band",
+ "slope_mean_pct": 2.98,
+ "slope_max_pct": 18.33,
+ "slope_max_sustained_pct": 19.19,
+ "sustained_window_m": 1.0,
+ "elevation_range_on_green_m": 0.707,
+ "flags": [
+  "max_sustained_19.2%_gt_8%"
+ ],
+ "pin_zones": {
+  "definition": "USGA-guided legal hole location: on the putting surface, \u22653 m from the edge, macro slope \u2264 tier over a 0.5 m cup bench",
+  "edge_setback_m": 3.0,
+  "cup_bench_radius_m": 0.5,
+  "headline_tier": "standard",
+  "legal_area_m2": 153.1,
+  "legal_fraction": 0.3128,
+  "scarce_legal_area": false,
+  "tiers": {
+   "traditional": {
+    "slope_max_pct": 3.0,
+    "area_m2": 234.6,
+    "fraction_of_green": 0.4795,
+    "n_zones": 1
+   },
+   "standard": {
+    "slope_max_pct": 2.0,
+    "area_m2": 153.1,
+    "fraction_of_green": 0.3128,
+    "n_zones": 4
+   },
+   "premium": {
+    "slope_max_pct": 1.5,
+    "area_m2": 90.5,
+    "fraction_of_green": 0.185,
+    "n_zones": 9
+   }
+  }
+ },
+ "generated": "2026-07-20T04:08:43+00:00",
+ "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"
+}

@@ -2,6 +2,7 @@
 
 import json
 
+import pytest
 from conftest import BASE_E, BASE_N, TO_LL, load_script, utm_disk
 from shapely.geometry import LineString, shape
 
@@ -78,6 +79,46 @@ def test_uniquify_practice_only_renames_when_multiple():
     one = [feat(0), feat(1)]
     mod.uniquify_practice(one)
     assert one[0]["properties"]["label"] == "practice"
+
+
+def test_flatten_nines_chains_and_offsets():
+    """Three interleaved nines with duplicate refs 1..3 chain into a=1-3,
+    b=4-6, c=7-9 by spatial adjacency, ordered west to east."""
+    holes = []
+    for nine_i, x0 in enumerate((0.0, 500.0, 1000.0)):  # three east-offset loops
+        for k in range(1, 4):
+            # hole k runs from (x0 + k*60, nine_i*40) east 50 m: hole k's end
+            # is 10 m from hole k+1's start within the same nine
+            a = (BASE_E + x0 + k * 60, BASE_N + nine_i * 40)
+            b = (BASE_E + x0 + k * 60 + 50, BASE_N + nine_i * 40)
+            holes.append({"osm_id": nine_i * 10 + k, "ref": k, "name": "",
+                          "line": LineString([TO_LL(*a), TO_LL(*b)])})
+    out = mod.flatten_nines(holes, 3)
+    assert sorted(h["ref"] for h in out) == list(range(1, 10))
+    by_nine = {}
+    for h in out:
+        by_nine.setdefault(h["nine"], []).append(h)
+    assert set(by_nine) == {"a", "b", "c"}
+    for grp in by_nine.values():
+        # all three holes of a group came from the same synthetic loop
+        assert len({h["osm_id"] // 10 for h in grp}) == 1
+        assert sorted(h["nine_ref"] for h in grp) == [1, 2, 3]
+    # a is the westmost loop, c the eastmost
+    assert {h["osm_id"] // 10 for h in by_nine["a"]} == {0}
+    assert {h["osm_id"] // 10 for h in by_nine["c"]} == {2}
+
+
+def test_flatten_nines_noop_without_config():
+    holes = [{"osm_id": 1, "ref": 5, "line": LineString([TO_LL(BASE_E, BASE_N),
+                                                         TO_LL(BASE_E + 50, BASE_N)])}]
+    assert mod.flatten_nines(holes, 0) == holes
+
+
+def test_flatten_nines_halts_on_wrong_multiplicity():
+    holes = [{"osm_id": 1, "ref": 1, "name": "",
+              "line": LineString([TO_LL(BASE_E, BASE_N), TO_LL(BASE_E + 50, BASE_N)])}]
+    with pytest.raises(SystemExit, match="expected 3 lines per ref"):
+        mod.flatten_nines(holes, 3)
 
 
 def test_cached_fetch_hits_cache(sandbox):

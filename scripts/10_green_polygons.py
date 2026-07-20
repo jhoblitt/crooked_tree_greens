@@ -30,7 +30,6 @@ from shapely.ops import transform as shp_transform
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_COURSE = "crooked_tree"
 
-AREA_MIN, AREA_MAX = 250.0, 1200.0
 PIN_SNAP_M = 30.0  # max distance from a hole-line endpoint to its green
 
 HDRS = {"User-Agent": "green-maps/0.1 (josh@hoblitt.com)"}
@@ -51,7 +50,7 @@ def load_course(slug):
 def set_course(slug):
     global CFG, POLY_DIR, CACHE_DIR, REPORTS
     global COURSE_NAME_RE, SEARCH_BBOX, EXPECTED_HOLES, NOMINATIM_QUERY, COURSE_OSM_ID
-    global TO_UTM
+    global TO_UTM, N_NINES, AREA_MIN, AREA_MAX
     CFG = load_course(slug)
     base = ROOT / "courses" / slug
     POLY_DIR = base / "polygons"
@@ -62,6 +61,8 @@ def set_course(slug):
     EXPECTED_HOLES = CFG["holes"].get("refs") or list(range(1, CFG["holes"]["count"] + 1))
     NOMINATIM_QUERY = CFG["osm"]["nominatim_query"]
     COURSE_OSM_ID = CFG["osm"].get("course_osm_id")
+    N_NINES = CFG["holes"].get("nines", 0)
+    AREA_MIN, AREA_MAX = CFG["holes"].get("area_m2", [250.0, 1200.0])
     TO_UTM = Transformer.from_crs("EPSG:4326", f"EPSG:{CFG['crs']['utm_epsg']}",
                                   always_xy=True).transform
 
@@ -164,7 +165,7 @@ def fetch_course():
   way["leisure"="golf_course"]["name"~"{COURSE_NAME_RE}",i]({s},{w},{n},{e});
   relation["leisure"="golf_course"]["name"~"{COURSE_NAME_RE}",i]({s},{w},{n},{e});
 );
-out tags geom;"""
+out geom;"""
     els = overpass(q)["elements"]
     if len(els) != 1:
         sys.exit(f"HALT: expected exactly 1 course way/relation matching "
@@ -202,7 +203,7 @@ def fetch_course_features(course_poly):
   relation["golf"="green"]({s},{w},{n},{e});
   way["golf"="hole"]({s},{w},{n},{e});
 );
-out tags geom;"""
+out geom;"""
     els = overpass(q)["elements"]
 
     course_utm = utm(course_poly).buffer(30)
@@ -223,6 +224,63 @@ out tags geom;"""
                 holes.append({"osm_id": el["id"], "ref": int(tags["ref"]),
                               "name": tags.get("name", ""), "line": line})
     return greens, holes
+
+
+def flatten_nines(holes, n_nines):
+    """Courses built as N nines duplicate refs 1..k per nine. Chain each nine
+    spatially (hole k's green end sits near hole k+1's tee), order the nines
+    deterministically west-to-east, and offset refs so hole numbers are unique
+    (nine 0 -> 1..k, nine 1 -> k+1..2k, ...). The chosen nine order is
+    synthesized, not scorecard truth — greens keep a `nine` property and the
+    QC notes must tell a human to confirm.
+    """
+    if not n_nines:
+        return holes
+    by_ref = {}
+    for h in holes:
+        by_ref.setdefault(h["ref"], []).append(h)
+    per_nine = max(by_ref)
+    bad = {k: len(v) for k, v in by_ref.items() if len(v) != n_nines}
+    if bad or set(by_ref) != set(range(1, per_nine + 1)):
+        sys.exit(f"HALT: expected {n_nines} lines per ref 1..{per_nine}, got "
+                 f"{ {k: len(v) for k, v in sorted(by_ref.items())} }")
+
+    def ends(h):
+        c = utm(h["line"]).coords
+        return Point(c[0]), Point(c[-1])
+
+    chains = sorted(by_ref[1], key=lambda h: utm(h["line"]).centroid.x)
+    groups = [[h] for h in chains]
+    for k in range(2, per_nine + 1):
+        cands = list(by_ref[k])
+        pairs = []
+        for gi, grp in enumerate(groups):
+            tail = ends(grp[-1])
+            for ci, cand in enumerate(cands):
+                head = ends(cand)
+                d = min(t.distance(hd) for t in tail for hd in head)
+                pairs.append((d, gi, ci))
+        taken_g, taken_c = set(), set()
+        for _d, gi, ci in sorted(pairs):
+            if gi in taken_g or ci in taken_c:
+                continue
+            groups[gi].append(cands[ci])
+            taken_g.add(gi)
+            taken_c.add(ci)
+
+    out = []
+    for gi, grp in enumerate(groups):
+        nine = chr(ord("a") + gi)
+        for h in grp:
+            h = dict(h)
+            h["nine"] = nine
+            h["nine_ref"] = h["ref"]
+            h["ref"] = h["ref"] + gi * per_nine
+            out.append(h)
+    print(f"  chained {n_nines} nines x {per_nine}: " +
+          ", ".join(f"{chr(ord('a')+i)}=holes {i*per_nine+1}-{(i+1)*per_nine}"
+                    for i in range(n_nines)))
+    return out
 
 
 def load_manual():
@@ -414,11 +472,14 @@ def main(course=None) -> int:
 
     print("greens + hole lines:")
     greens, holes = fetch_course_features(course_poly)
+    holes = flatten_nines(holes, N_NINES)
     (POLY_DIR / "hole_lines.geojson").write_text(json.dumps({
         "type": "FeatureCollection",
         "features": [{"type": "Feature",
                       "properties": {"hole": h["ref"], "osm_id": h["osm_id"],
-                                     "name": h.get("name", "")},
+                                     "name": h.get("name", ""),
+                                     "nine": h.get("nine", ""),
+                                     "nine_ref": h.get("nine_ref", h["ref"])},
                       "geometry": mapping(h["line"])} for h in sorted(holes, key=lambda h: h["ref"])],
     }))
     greens += load_manual()

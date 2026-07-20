@@ -1,0 +1,41 @@
+name = "Starr Pass Golf Course"
+location = "Tucson Mountains, Tucson, AZ 85745"
+
+[osm]
+name_re = "Starr Pass"
+search_bbox = [32.17, -111.10, 32.26, -110.99]  # s, w, n, e
+nominatim_query = "Starr Pass golf, Tucson"
+course_osm_id = 14067367
+
+[holes]
+count = 27
+# OSM maps three unnamed nines with per-nine refs 1-9; Stage 1 chains each
+# nine spatially and flattens to holes 1-27 (a=1-9, b=10-18, c=19-27, ordered
+# west to east). Which nine is Rattler/Roadrunner/Coyote on the scorecard is
+# UNCONFIRMED — the nine letters are synthetic.
+nines = 3
+
+[lidar]
+title_must_contain = ["PimaCo", "2021"]
+
+[crs]
+utm_epsg = 6341
+accept_horizontal_epsg = [6341, 26912]
+horizontal_desc = "EPSG:6341 NAD83(2011) / UTM zone 12N (m)"
+vertical_desc = "EPSG:5703 NAVD88 height (m), GEOID18"
+
+[qc]
+notes = """this is a 27-hole facility mapped in OSM as three unnamed nines \
+with per-nine refs 1–9; the pipeline chained each nine spatially and numbered \
+them a=1–9, b=10–18, c=19–27 ordered west to east. The mapping of those \
+letters to the scorecard nines (Rattler/Roadrunner/Coyote) is synthetic and \
+must be confirmed by a human before hole numbers are trusted. Greens carry \
+`nine`/`nine_ref` properties in hole_lines.geojson for that reconciliation. \
+Every green carries slope flags: this is target desert golf in the Tucson \
+Mountains — visual QC of the heatmaps shows genuinely tiered greens (tier \
+faces legitimately exceed 8% sustained over 1 m) and OSM polygon edges that \
+clip the uniformly steep (≥8%) surrounds banks, which also inflates mean \
+slopes and yields scarce/zero legal pin area on ten greens. The putting cores \
+and tier plateaus are clean (1–5% with coherent drainage) and the pin-zone \
+maps correctly mark plateaus legal and tier faces illegal. Treat per-green \
+max-sustained values at polygon edges with polygon-accuracy skepticism."""
