@@ -121,3 +121,5 @@ def test_crooked_tree_is_complete_with_known_steep_greens():
     for label in ("hole_13", "hole_18"):
         assert by[label]["legal_pin_area_m2"] == 0.0
         assert by[label]["scarce_legal_area"] is True
+    # numbering + outlines human-confirmed: no green carries a review flag
+    assert [g["label"] for g in idx["greens"] if g["needs_review"]] == []

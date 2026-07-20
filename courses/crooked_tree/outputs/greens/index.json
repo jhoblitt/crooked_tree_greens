@@ -12,7 +12,7 @@
   "2021-10-04"
  ],
  "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor",
- "generated": "2026-07-20T17:19:03+00:00",
+ "generated": "2026-07-20T23:15:07+00:00",
  "greens": [
   {
    "label": "hole_01",
@@ -125,7 +125,7 @@
    "flags": [
     "max_sustained_17.2%_gt_8%"
    ],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_04",
@@ -162,7 +162,7 @@
    "legal_pin_fraction": 0.0887,
    "scarce_legal_area": false,
    "flags": [],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_05",
@@ -201,7 +201,7 @@
    "flags": [
     "max_sustained_9.8%_gt_8%"
    ],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_06",
@@ -238,7 +238,7 @@
    "legal_pin_fraction": 0.0327,
    "scarce_legal_area": false,
    "flags": [],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_07",
@@ -277,7 +277,7 @@
    "flags": [
     "max_sustained_10.9%_gt_8%"
    ],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_08",
@@ -316,7 +316,7 @@
    "flags": [
     "max_sustained_8.4%_gt_8%"
    ],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_09",
@@ -467,7 +467,7 @@
     "mean_slope_4.40%_outside_0.5-4%",
     "max_sustained_8.1%_gt_8%"
    ],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_13",
@@ -507,7 +507,7 @@
     "mean_slope_5.91%_outside_0.5-4%",
     "max_sustained_12.2%_gt_8%"
    ],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_14",
@@ -546,7 +546,7 @@
    "flags": [
     "max_sustained_9.9%_gt_8%"
    ],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_15",
@@ -583,7 +583,7 @@
    "legal_pin_fraction": 0.187,
    "scarce_legal_area": false,
    "flags": [],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_16",
@@ -620,7 +620,7 @@
    "legal_pin_fraction": 0.081,
    "scarce_legal_area": false,
    "flags": [],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_17",
@@ -657,7 +657,7 @@
    "legal_pin_fraction": 0.1586,
    "scarce_legal_area": false,
    "flags": [],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "hole_18",
@@ -736,7 +736,7 @@
    "flags": [
     "max_sustained_9.1%_gt_8%"
    ],
-   "needs_review": true
+   "needs_review": false
   },
   {
    "label": "practice_2",
@@ -773,7 +773,7 @@
    "legal_pin_fraction": 0.1869,
    "scarce_legal_area": false,
    "flags": [],
-   "needs_review": true
+   "needs_review": false
   }
  ]
 }

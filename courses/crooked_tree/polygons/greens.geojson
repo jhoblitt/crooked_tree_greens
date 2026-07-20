@@ -224,7 +224,7 @@
     "osm_id": null,
     "area_m2": 383.7,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": -74.4
    },
    "geometry": {
@@ -382,7 +382,7 @@
     "osm_id": null,
     "area_m2": 330.6,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": -131.8
    },
    "geometry": {
@@ -520,7 +520,7 @@
     "osm_id": null,
     "area_m2": 320.1,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": 32.4
    },
    "geometry": {
@@ -674,7 +674,7 @@
     "osm_id": null,
     "area_m2": 452.2,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": -147.7
    },
    "geometry": {
@@ -828,7 +828,7 @@
     "osm_id": null,
     "area_m2": 575.0,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": 20.5
    },
    "geometry": {
@@ -934,7 +934,7 @@
     "osm_id": null,
     "area_m2": 802.3,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": 34.3
    },
    "geometry": {
@@ -1322,7 +1322,7 @@
     "osm_id": null,
     "area_m2": 291.9,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": 2.4
    },
    "geometry": {
@@ -1420,7 +1420,7 @@
     "osm_id": null,
     "area_m2": 282.9,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": 3.0
    },
    "geometry": {
@@ -1538,7 +1538,7 @@
     "osm_id": null,
     "area_m2": 398.2,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": -173.9
    },
    "geometry": {
@@ -1676,7 +1676,7 @@
     "osm_id": null,
     "area_m2": 290.5,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": -99.1
    },
    "geometry": {
@@ -1794,7 +1794,7 @@
     "osm_id": null,
     "area_m2": 484.0,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": 58.6
    },
    "geometry": {
@@ -1896,7 +1896,7 @@
     "osm_id": null,
     "area_m2": 377.3,
     "hole_source": "hole_line",
-    "needs_review": true,
+    "needs_review": false,
     "approach_deg": 30.2
    },
    "geometry": {
@@ -2096,7 +2096,7 @@
     "osm_id": 1085238770,
     "area_m2": 874.4,
     "hole_source": "unassigned",
-    "needs_review": true
+    "needs_review": false
    },
    "geometry": {
     "type": "Polygon",
@@ -2185,7 +2185,7 @@
     "osm_id": 1122486501,
     "area_m2": 330.7,
     "hole_source": "unassigned",
-    "needs_review": true
+    "needs_review": false
    },
    "geometry": {
     "type": "Polygon",

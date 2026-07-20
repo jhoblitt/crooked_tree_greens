@@ -139,6 +139,34 @@ def test_build_scorecard_halts_on_duplicate_and_gap():
         mod.build_scorecard({"A": [1, 2]}, [1, 2, 3])
 
 
+def test_polygons_confirmed_clears_manual_and_practice(monkeypatch):
+    def manual_green(hole=None):
+        g = green(BASE_E, BASE_N, r=12.0)  # ~440 m², safely within area bounds
+        g["manual"] = True
+        g["hole"] = hole
+        g["hole_source"] = "manual" if hole is None else "hole_line"
+        return g
+
+    # default: hand-drawn and practice greens are flagged for review
+    monkeypatch.setattr(mod, "POLYGONS_CONFIRMED", False)
+    assert mod.green_feature(manual_green(5))["properties"]["needs_review"] is True
+    assert mod.green_feature(manual_green(None))["properties"]["needs_review"] is True
+
+    # confirmed: those flags clear...
+    monkeypatch.setattr(mod, "POLYGONS_CONFIRMED", True)
+    assert mod.green_feature(manual_green(5))["properties"]["needs_review"] is False
+    assert mod.green_feature(manual_green(None))["properties"]["needs_review"] is False
+    # ...but a genuine duplicate-claim conflict still flags
+    dup = manual_green(5)
+    dup["needs_review"] = True
+    assert mod.green_feature(dup)["properties"]["needs_review"] is True
+    # ...and out-of-bounds area still flags
+    tiny = manual_green(5)
+    tiny["poly"] = shape(utm_disk(BASE_E, BASE_N, 3.0))  # ~28 m²
+    f = mod.green_feature(tiny)
+    assert f["properties"]["needs_review"] is True and "area_flag" in f["properties"]
+
+
 def test_green_feature_uses_scorecard(monkeypatch):
     monkeypatch.setattr(mod, "SCORECARD", {26: ("Palmer", 1)})
     g = green(BASE_E, BASE_N)

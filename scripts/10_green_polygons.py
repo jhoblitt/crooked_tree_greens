@@ -67,7 +67,7 @@ def build_scorecard(table, expected_holes):
 def set_course(slug):
     global CFG, POLY_DIR, CACHE_DIR, REPORTS
     global COURSE_NAME_RE, SEARCH_BBOX, EXPECTED_HOLES, NOMINATIM_QUERY, COURSE_OSM_ID
-    global TO_UTM, N_NINES, AREA_MIN, AREA_MAX, SCORECARD
+    global TO_UTM, N_NINES, AREA_MIN, AREA_MAX, SCORECARD, POLYGONS_CONFIRMED
     CFG = load_course(slug)
     base = ROOT / "courses" / slug
     POLY_DIR = base / "polygons"
@@ -81,6 +81,10 @@ def set_course(slug):
     N_NINES = CFG["holes"].get("nines", 0)
     AREA_MIN, AREA_MAX = CFG["holes"].get("area_m2", [250.0, 1200.0])
     SCORECARD = build_scorecard(CFG["holes"].get("scorecard"), EXPECTED_HOLES)
+    # When a human has vetted the (hand-drawn) green outlines, stop flagging
+    # them for review just because they were digitized or are practice greens;
+    # genuine issues (duplicate hole claims, out-of-bounds area) still flag.
+    POLYGONS_CONFIRMED = CFG["holes"].get("polygons_confirmed", False)
     TO_UTM = Transformer.from_crs("EPSG:4326", f"EPSG:{CFG['crs']['utm_epsg']}",
                                   always_xy=True).transform
 
@@ -377,6 +381,17 @@ def approach_azimuth(green_poly_utm, line_utm):
     return math.degrees(math.atan2(tip.y - back.y, tip.x - back.x))
 
 
+def review_needed(g):
+    """A green needs review for a genuine conflict (duplicate hole claim)
+    always, and for being hand-drawn or unnumbered unless the course's
+    polygons are marked human-confirmed. Out-of-bounds area is added by the
+    caller after the area is computed."""
+    review = bool(g.get("needs_review"))
+    if not POLYGONS_CONFIRMED:
+        review = review or bool(g.get("manual")) or g["hole"] is None
+    return review
+
+
 def green_feature(g):
     area = utm(g["poly"]).area
     hole = g["hole"]
@@ -396,7 +411,7 @@ def green_feature(g):
         "osm_id": g["osm_id"],
         "area_m2": round(area, 1),
         "hole_source": g["hole_source"] or ("manual" if g.get("manual") else "unassigned"),
-        "needs_review": bool(g.get("needs_review") or g.get("manual") or g["hole"] is None),
+        "needs_review": review_needed(g),
     }
     if g.get("hole_line") is not None:
         props["approach_deg"] = round(

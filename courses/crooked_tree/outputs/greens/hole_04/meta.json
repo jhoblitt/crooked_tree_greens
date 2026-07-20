@@ -5,7 +5,7 @@
  "nine": null,
  "nine_hole": null,
  "approach_deg": -131.8,
- "needs_review": true,
+ "needs_review": false,
  "hole_source": "hole_line",
  "source_work_units": [
   "USGS Lidar Point Cloud AZ_PimaCounty_2021_B21"
@@ -73,6 +73,6 @@
    }
   }
  },
- "generated": "2026-07-20T17:18:55+00:00",
+ "generated": "2026-07-20T23:15:00+00:00",
  "vertical_fidelity": "macro contours only; source RMSE ~5-10 cm; micro-break below noise floor"
 }

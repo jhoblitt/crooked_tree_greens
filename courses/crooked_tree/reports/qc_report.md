@@ -1,6 +1,6 @@
 # Crooked Tree Golf Course — QC report
 
-Generated 2026-07-20T17:19:03+00:00 · status: **COMPLETE** (18/18 hole greens + 2 practice)
+Generated 2026-07-20T23:15:07+00:00 · status: **COMPLETE** (18/18 hole greens + 2 practice)
 
 - Course: Crooked Tree Golf Course, Arthur Pack Regional Park, 9101 N Thornydale Rd, Tucson, AZ 85742 (OSM 263321891; Nominatim cross-checked)
 - LiDAR source: USGS Lidar Point Cloud AZ_PimaCounty_2021_B21 (USGS 3DEP, public domain), acquisition 2021-10-04, tiles: USGS_LPC_AZ_PimaCounty_2021_B21_494580.laz, USGS_LPC_AZ_PimaCounty_2021_B21_494581.laz
@@ -42,23 +42,17 @@ Generated 2026-07-20T17:19:03+00:00 · status: **COMPLETE** (18/18 hole greens +
 
 ## Flagged items
 
-- **hole_03**: max_sustained_17.2%_gt_8% · polygon needs human review (hole_source=hole_line)
-- **hole_04**: polygon needs human review (hole_source=hole_line)
-- **hole_05**: max_sustained_9.8%_gt_8% · polygon needs human review (hole_source=hole_line)
-- **hole_06**: polygon needs human review (hole_source=hole_line)
-- **hole_07**: max_sustained_10.9%_gt_8% · polygon needs human review (hole_source=hole_line)
-- **hole_08**: max_sustained_8.4%_gt_8% · polygon needs human review (hole_source=hole_line)
-- **hole_12**: mean_slope_4.40%_outside_0.5-4%; max_sustained_8.1%_gt_8% · polygon needs human review (hole_source=hole_line)
-- **hole_13**: mean_slope_5.91%_outside_0.5-4%; max_sustained_12.2%_gt_8% · polygon needs human review (hole_source=hole_line)
-- **hole_14**: max_sustained_9.9%_gt_8% · polygon needs human review (hole_source=hole_line)
-- **hole_15**: polygon needs human review (hole_source=hole_line)
-- **hole_16**: polygon needs human review (hole_source=hole_line)
-- **hole_17**: polygon needs human review (hole_source=hole_line)
+- **hole_03**: max_sustained_17.2%_gt_8%
+- **hole_05**: max_sustained_9.8%_gt_8%
+- **hole_07**: max_sustained_10.9%_gt_8%
+- **hole_08**: max_sustained_8.4%_gt_8%
+- **hole_12**: mean_slope_4.40%_outside_0.5-4%; max_sustained_8.1%_gt_8%
+- **hole_13**: mean_slope_5.91%_outside_0.5-4%; max_sustained_12.2%_gt_8%
+- **hole_14**: max_sustained_9.9%_gt_8%
 - **hole_18**: mean_slope_4.57%_outside_0.5-4%; max_sustained_8.2%_gt_8%
-- **practice_1**: max_sustained_9.1%_gt_8% · polygon needs human review (hole_source=unassigned)
-- **practice_2**: polygon needs human review (hole_source=unassigned)
+- **practice_1**: max_sustained_9.1%_gt_8%
 
-Notes on the flags: this course is built on a north-sloping bajada, so sustained-slope flags are mostly real terrain, and all flagged fits are still in the 3–6 cm residual band. Specifics from visual QC of the slope heatmaps: hole_03's 17% band is a steep bank clipped by the polygon's west edge (trim ~1–2 m or accept as collar); hole_13 genuinely tilts 4–6% north with its NW corner touching a bank; hole_18 sits on a uniform hillside (heaviest smoothing still fits at 3.6 cm); practice_1's 874 m² OSM polygon appears overdrawn and contains a mound band. Manually digitized polygons (holes 3–8, 12–17) and both practice greens carry needs_review by construction — check edges against each slope heatmap. Hole numbers were assigned from golf=hole line pin endpoints, which may not match the scorecard — confirm numbering before use.
+Notes on the flags: this course is built on a north-sloping bajada, so sustained-slope flags are mostly real terrain, and all flagged fits are still in the 3–6 cm residual band. Specifics from visual QC of the slope heatmaps: hole_03's 17% band is a steep bank clipped by the polygon's west edge (trim ~1–2 m or accept as collar); hole_13 genuinely tilts 4–6% north with its NW corner touching a bank; hole_18 sits on a uniform hillside (heaviest smoothing still fits at 3.6 cm); practice_1's 874 m² OSM polygon runs a touch large over a mound band. Hole numbering (1–18) and every green outline — including the 12 hand-digitized greens (holes 3–8, 12–17) and both practice greens — were human-confirmed on 2026-07-20.
 
 ## Data honesty
 
