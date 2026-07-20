@@ -134,8 +134,10 @@ viewer.addEventListener('wheel', e => {
   const r = viewer.getBoundingClientRect();
   zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX - r.left, e.clientY - r.top);
 }, { passive: false });
+viewer.addEventListener('dragstart', e => e.preventDefault());  // no native image drag
 viewer.addEventListener('pointerdown', e => {
   if (e.target.closest('.vbtns')) return;  // let zoom/reset buttons receive the click
+  e.preventDefault();  // suppress the native image drag that would cancel the pan
   dragging = true; px = e.clientX; py = e.clientY;
   viewer.setPointerCapture(e.pointerId); viewer.style.cursor = 'grabbing';
 });
@@ -190,7 +192,7 @@ def green_page(slug, g, meta, course_title, prev_label, next_label):
       <button onclick="zoomBtn(1/1.3)" title="zoom out">−</button>
       <button onclick="resetView()" title="reset">⌂</button>
     </div>
-    <img id="view" src="slope_heatmap.png"
+    <img id="view" src="slope_heatmap.png" draggable="false"
          data-slope="slope_heatmap.png" data-contours="contours.png"
          data-pins="pin_zones.png" alt="{html.escape(name)} surface map">
   </div>

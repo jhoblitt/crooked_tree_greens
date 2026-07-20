@@ -65,6 +65,9 @@ def test_green_pages_have_viewer_and_navigation(sandbox):
     assert "zoomBtn(1.3)" in page and "resetView()" in page
     # the pointerdown guard that lets the zoom buttons actually fire
     assert "e.target.closest('.vbtns')" in page
+    # native image drag suppressed so pan doesn't cancel after a tiny move
+    assert 'draggable="false"' in page
+    assert "e.preventDefault()" in page and "dragstart" in page
     # return navigation + prev/next (wraps)
     assert 'href="../../"' in page
     assert 'href="../../greens_overview.html"' in page
